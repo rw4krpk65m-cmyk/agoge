@@ -1,0 +1,1108 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>AGOGE — Programme de musculation</title>
+<style>
+@import url('https://fonts.googleapis.com/css2?family=Cinzel:wght@600;700&family=Work+Sans:ital,wght@0,400;0,500;0,600;0,700;1,400&family=IBM+Plex+Mono:wght@500;600&display=swap');
+
+:root{
+  --bg:#14120f;
+  --bg-elev:#1c1914;
+  --bg-elev-2:#242019;
+  --bg-elev-3:#2c2620;
+  --line:#3a3327;
+  --line-soft:#2a251d;
+  --gold:#c19a5b;
+  --gold-soft:#8a7048;
+  --gold-glow:rgba(193,154,91,0.18);
+  --cream:#ece4d3;
+  --cream-dim:#a89b84;
+  --cream-faint:#6f6555;
+  --red:#9a4a3f;
+  --green:#7a9a72;
+  --radius:12px;
+  --font-display:'Cinzel',serif;
+  --font-body:'Work Sans',system-ui,-apple-system,sans-serif;
+  --font-mono:'IBM Plex Mono',monospace;
+}
+
+*{box-sizing:border-box;}
+html,body{margin:0;padding:0;}
+body{
+  background:var(--bg);
+  color:var(--cream);
+  font-family:var(--font-body);
+  -webkit-font-smoothing:antialiased;
+  padding-bottom:76px;
+}
+
+::selection{background:var(--gold-glow);}
+
+a{color:var(--gold);}
+
+/* ---------- HEADER ---------- */
+header.app-header{
+  position:sticky; top:0; z-index:20;
+  background:linear-gradient(180deg, var(--bg) 70%, rgba(20,18,15,0.85));
+  backdrop-filter:blur(6px);
+  border-bottom:1px solid var(--line-soft);
+  padding:14px 18px 12px;
+}
+.brand-row{display:flex; align-items:baseline; justify-content:space-between; gap:10px;}
+.brand{
+  font-family:var(--font-display);
+  font-weight:700;
+  letter-spacing:0.12em;
+  font-size:20px;
+  color:var(--gold);
+  text-transform:uppercase;
+}
+.brand-sub{
+  font-size:11px;
+  color:var(--cream-faint);
+  letter-spacing:0.04em;
+  margin-top:2px;
+}
+.week-strip{
+  margin-top:10px;
+  display:flex;
+  gap:14px;
+  flex-wrap:wrap;
+  font-family:var(--font-mono);
+  font-size:12px;
+  color:var(--cream-dim);
+}
+.week-strip b{color:var(--gold); font-weight:600;}
+
+/* ---------- LAYOUT ---------- */
+main{
+  max-width:760px;
+  margin:0 auto;
+  padding:16px 16px 40px;
+}
+.tab-panel{display:none;}
+.tab-panel.active{display:block; animation:fadein .25s ease;}
+@keyframes fadein{from{opacity:0; transform:translateY(4px);} to{opacity:1; transform:none;}}
+
+section.block{margin-bottom:26px;}
+h2.block-title{
+  font-family:var(--font-display);
+  font-size:15px;
+  letter-spacing:0.08em;
+  text-transform:uppercase;
+  color:var(--cream);
+  margin:0 0 10px;
+  padding-bottom:8px;
+  border-bottom:1px solid var(--line-soft);
+}
+p.block-sub{
+  font-size:13px;
+  color:var(--cream-dim);
+  margin:-4px 0 14px;
+  line-height:1.5;
+}
+
+/* ---------- NOTE BOX ---------- */
+.note-box{
+  background:var(--bg-elev-2);
+  border-left:3px solid var(--gold);
+  border-radius:6px;
+  padding:12px 14px;
+  margin-bottom:18px;
+}
+.note-box .note-title{
+  font-weight:600; color:var(--gold); font-size:13px;
+  margin-bottom:6px; text-transform:uppercase; letter-spacing:0.04em;
+}
+.note-box ul{margin:0; padding-left:18px;}
+.note-box li{font-size:13px; color:var(--cream-dim); line-height:1.55; margin-bottom:4px; font-style:italic;}
+
+/* ---------- PLANNING TABLE ---------- */
+table.plan-table{width:100%; border-collapse:collapse; font-size:13px; margin-bottom:8px;}
+table.plan-table th{
+  background:var(--bg-elev-3); color:var(--gold); text-align:left;
+  padding:8px 10px; font-family:var(--font-mono); font-size:11px;
+  text-transform:uppercase; letter-spacing:0.03em;
+}
+table.plan-table td{padding:8px 10px; border-bottom:1px solid var(--line-soft);}
+table.plan-table tr:nth-child(even) td{background:rgba(193,154,91,0.05);}
+.day-name{font-weight:600; color:var(--cream);}
+.tag-rest{color:var(--cream-faint); font-style:italic;}
+
+/* ---------- SESSION CARDS (accordion) ---------- */
+details.session-card{
+  background:var(--bg-elev);
+  border:1px solid var(--line-soft);
+  border-radius:var(--radius);
+  margin-bottom:12px;
+  overflow:hidden;
+}
+details.session-card > summary{
+  list-style:none;
+  cursor:pointer;
+  padding:14px 16px;
+  display:flex;
+  align-items:center;
+  gap:12px;
+  -webkit-tap-highlight-color:transparent;
+}
+details.session-card > summary::-webkit-details-marker{display:none;}
+.medallion{
+  flex:0 0 auto;
+  width:38px; height:38px;
+  border:2px solid var(--gold-soft);
+  border-radius:50%;
+  display:flex; align-items:center; justify-content:center;
+  font-family:var(--font-display); font-weight:700; font-size:15px;
+  color:var(--gold);
+  background:radial-gradient(circle at 35% 30%, var(--bg-elev-3), var(--bg-elev));
+}
+details[open] .medallion{border-color:var(--gold); box-shadow:0 0 0 3px var(--gold-glow);}
+.session-head-text{flex:1 1 auto; min-width:0;}
+.session-head-title{font-family:var(--font-display); font-size:14px; letter-spacing:0.03em; color:var(--cream); text-transform:uppercase;}
+.session-head-focus{font-size:12px; color:var(--cream-dim); margin-top:2px; line-height:1.4;}
+.chevron{flex:0 0 auto; color:var(--cream-faint); transition:transform .2s ease;}
+details[open] .chevron{transform:rotate(180deg); color:var(--gold);}
+.badge-optional{
+  display:inline-block; font-size:10px; font-family:var(--font-mono);
+  color:var(--gold-soft); border:1px solid var(--line); border-radius:20px;
+  padding:1px 8px; margin-left:6px; vertical-align:middle;
+}
+
+.session-body{padding:0 16px 16px;}
+
+/* exercise table (programme) */
+table.ex-table{width:100%; border-collapse:collapse; font-size:12.5px; margin-top:4px;}
+table.ex-table th{
+  text-align:left; color:var(--gold-soft); font-family:var(--font-mono);
+  font-size:10.5px; text-transform:uppercase; letter-spacing:0.03em;
+  padding:6px 8px; border-bottom:1px solid var(--line);
+}
+table.ex-table td{padding:9px 8px; border-bottom:1px solid var(--line-soft); vertical-align:top;}
+table.ex-table td.ex-name{font-weight:600; color:var(--cream); width:34%;}
+table.ex-table td.mono{font-family:var(--font-mono); color:var(--cream-dim); white-space:nowrap;}
+table.ex-table td.ex-note{color:var(--cream-faint); font-style:italic; font-size:11.5px;}
+
+/* ---------- GUIDE: exercise detail accordions ---------- */
+details.ex-detail{
+  border-top:1px solid var(--line-soft);
+  padding:10px 2px;
+}
+details.ex-detail:first-child{border-top:none;}
+details.ex-detail > summary{
+  cursor:pointer; list-style:none; display:flex; align-items:center; gap:8px;
+  font-weight:600; font-size:13.5px; color:var(--cream);
+}
+details.ex-detail > summary::-webkit-details-marker{display:none;}
+details.ex-detail > summary .chevron{width:14px; height:14px;}
+.ex-detail-body{padding:10px 4px 4px 22px;}
+.ex-meta{font-size:12px; color:var(--gold-soft); margin-bottom:6px;}
+.ex-meta b{color:var(--gold);}
+.ex-label{font-size:11px; text-transform:uppercase; letter-spacing:0.04em; color:var(--cream-faint); margin:10px 0 4px; font-family:var(--font-mono);}
+.ex-text{font-size:13px; color:var(--cream-dim); line-height:1.55; margin:0;}
+ol.ex-steps{margin:0; padding-left:20px;}
+ol.ex-steps li{font-size:13px; color:var(--cream-dim); line-height:1.55; margin-bottom:4px;}
+ul.ex-mistakes{margin:0; padding-left:20px;}
+ul.ex-mistakes li{font-size:13px; color:var(--cream-dim); line-height:1.55; margin-bottom:4px;}
+.ex-variant{
+  margin-top:8px; background:var(--bg-elev-2); border-radius:6px; padding:8px 10px;
+  font-size:12.5px; color:var(--cream-dim); font-style:italic;
+}
+.ex-variant b{color:var(--gold); font-style:normal;}
+.superset-label{
+  font-size:11.5px; color:var(--cream-faint); font-style:italic; margin-bottom:2px;
+}
+
+/* ---------- REST DAY OPTIONS ---------- */
+.rest-option{margin-bottom:16px;}
+.rest-option h3{
+  font-family:var(--font-display); font-size:13px; letter-spacing:0.03em;
+  color:var(--gold); margin:0 0 6px; text-transform:uppercase;
+}
+.rest-option p{font-size:13px; color:var(--cream-dim); line-height:1.55; margin:0 0 4px;}
+.rest-option ul{margin:4px 0 0; padding-left:18px;}
+.rest-option li{font-size:13px; color:var(--cream-dim); line-height:1.5; margin-bottom:3px;}
+
+/* ---------- SUIVI TAB ---------- */
+.week-tabs{display:flex; gap:8px; overflow-x:auto; padding-bottom:6px; margin-bottom:16px; -webkit-overflow-scrolling:touch;}
+.week-tab-btn{
+  flex:0 0 auto; font-family:var(--font-mono); font-size:12.5px;
+  background:var(--bg-elev); color:var(--cream-dim); border:1px solid var(--line-soft);
+  border-radius:20px; padding:7px 14px; cursor:pointer; white-space:nowrap;
+}
+.week-tab-btn.active{background:var(--gold-glow); border-color:var(--gold); color:var(--gold);}
+.week-tab-add{
+  flex:0 0 auto; border:1px dashed var(--line); background:transparent; color:var(--cream-faint);
+  border-radius:20px; padding:7px 14px; cursor:pointer; font-size:12.5px;
+}
+
+.date-range{display:flex; align-items:center; gap:8px; margin-bottom:16px; flex-wrap:wrap;}
+.date-range input[type=date]{flex:1 1 140px;}
+.date-range span{color:var(--cream-faint); font-size:12px;}
+
+input, select, textarea{
+  background:var(--bg-elev-2); border:1px solid var(--line); color:var(--cream);
+  border-radius:6px; padding:7px 9px; font-family:var(--font-body); font-size:13px;
+  width:100%;
+}
+input:focus, select:focus, textarea:focus{outline:2px solid var(--gold-glow); border-color:var(--gold-soft);}
+input[type=checkbox]{width:19px; height:19px; accent-color:var(--gold); cursor:pointer; margin:0;}
+
+table.log-table{width:100%; border-collapse:collapse; font-size:12px; margin-bottom:4px;}
+table.log-table th{
+  color:var(--gold-soft); font-family:var(--font-mono); font-size:10px; text-transform:uppercase;
+  text-align:left; padding:6px 6px; border-bottom:1px solid var(--line); letter-spacing:0.02em;
+}
+table.log-table td{padding:6px 5px; border-bottom:1px solid var(--line-soft); vertical-align:middle;}
+table.log-table td.day-cell{font-weight:600; font-size:12.5px; color:var(--cream); width:15%;}
+table.log-table td.seance-cell{font-size:11.5px; color:var(--cream-dim); width:19%;}
+table.log-table td.check-cell{text-align:center; width:9%;}
+table.log-table input[type=date]{font-size:11px; padding:5px 4px;}
+table.log-table select{font-size:11px; padding:5px 4px;}
+table.log-table input[type=text]{font-size:11px; padding:5px 4px;}
+
+.session-log-table td.ex-name-cell{font-weight:600; color:var(--cream); font-size:12px; width:26%;}
+.session-log-table input{font-size:11.5px; padding:5px 5px;}
+
+.bilan-grid{display:grid; grid-template-columns:1fr 1fr; gap:10px; margin-bottom:14px;}
+.field-label{display:block; font-size:11px; color:var(--cream-faint); text-transform:uppercase; letter-spacing:0.03em; margin-bottom:4px; font-family:var(--font-mono);}
+.field{margin-bottom:0;}
+textarea{min-height:60px; resize:vertical;}
+
+.photo-zone{
+  border:1.5px dashed var(--line); border-radius:var(--radius); min-height:180px;
+  display:flex; align-items:center; justify-content:center; flex-direction:column;
+  gap:8px; margin-bottom:14px; overflow:hidden; position:relative; background:var(--bg-elev-2);
+}
+.photo-zone img{width:100%; height:100%; object-fit:cover; position:absolute; inset:0;}
+.photo-zone .photo-placeholder{color:var(--cream-faint); font-size:12.5px; text-align:center; padding:0 20px;}
+.photo-zone .photo-placeholder svg{margin-bottom:6px; opacity:0.6;}
+.photo-actions{position:relative; z-index:2; display:flex; gap:8px;}
+.btn{
+  font-family:var(--font-body); font-weight:600; font-size:12.5px; cursor:pointer;
+  border-radius:20px; padding:8px 16px; border:1px solid var(--gold-soft);
+  background:var(--bg-elev-3); color:var(--gold);
+}
+.btn.btn-danger{border-color:var(--red); color:var(--red); background:rgba(154,74,63,0.08);}
+.btn.btn-ghost{border-color:var(--line); color:var(--cream-dim); background:transparent;}
+.photo-zone.has-photo .photo-actions{
+  position:absolute; bottom:10px; right:10px; z-index:2;
+}
+.photo-zone.has-photo .btn{background:rgba(20,18,15,0.75); backdrop-filter:blur(3px);}
+
+.save-pill{
+  position:fixed; bottom:80px; left:50%; transform:translateX(-50%) translateY(20px);
+  background:var(--gold); color:#1c1914; font-family:var(--font-mono); font-size:11.5px;
+  font-weight:600; padding:8px 16px; border-radius:20px; opacity:0; transition:all .25s ease;
+  pointer-events:none; z-index:30; letter-spacing:0.03em;
+}
+.save-pill.show{opacity:1; transform:translateX(-50%) translateY(0);}
+
+.subhead-row{display:flex; align-items:center; justify-content:space-between; margin:18px 0 8px;}
+.subhead-row h3{font-family:var(--font-display); font-size:12.5px; letter-spacing:0.05em; color:var(--gold); text-transform:uppercase; margin:0;}
+
+/* ---------- BOTTOM NAV ---------- */
+nav.tabbar{
+  position:fixed; bottom:0; left:0; right:0; z-index:25;
+  background:var(--bg-elev); border-top:1px solid var(--line-soft);
+  display:flex; padding:6px 8px calc(6px + env(safe-area-inset-bottom));
+}
+nav.tabbar button{
+  flex:1; background:none; border:none; color:var(--cream-faint);
+  display:flex; flex-direction:column; align-items:center; gap:3px;
+  padding:6px 4px; cursor:pointer; font-family:var(--font-body); font-size:10.5px;
+  letter-spacing:0.03em; text-transform:uppercase;
+}
+nav.tabbar button.active{color:var(--gold);}
+nav.tabbar button svg{width:20px; height:20px;}
+
+/* ---------- DESKTOP ---------- */
+@media (min-width:860px){
+  body{padding-bottom:0; padding-left:200px;}
+  header.app-header{padding-left:calc(200px + 24px);}
+  .brand-row, .week-strip{max-width:760px; margin:0 auto;}
+  main{padding:28px 24px 60px;}
+  nav.tabbar{
+    top:0; bottom:0; left:0; right:auto; width:200px;
+    flex-direction:column; justify-content:flex-start; align-items:stretch;
+    border-top:none; border-right:1px solid var(--line-soft); padding:24px 12px;
+    gap:4px;
+  }
+  nav.tabbar button{
+    flex-direction:row; justify-content:flex-start; gap:10px; padding:11px 12px;
+    border-radius:8px; font-size:12px;
+  }
+  nav.tabbar button.active{background:var(--gold-glow);}
+  .save-pill{left:calc(200px + 50%);}
+}
+</style>
+</head>
+<body>
+
+<header class="app-header">
+  <div class="brand-row">
+    <div>
+      <div class="brand">Agogē</div>
+      <div class="brand-sub">Haut du corps &amp; jambes — prise de masse</div>
+    </div>
+  </div>
+  <div class="week-strip" id="week-strip"></div>
+</header>
+
+<main>
+  <div class="tab-panel active" id="tab-programme"></div>
+  <div class="tab-panel" id="tab-guide"></div>
+  <div class="tab-panel" id="tab-suivi"></div>
+</main>
+
+<nav class="tabbar">
+  <button data-tab="programme" class="active">
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M6.5 6.5h11v11h-11z"/><path d="M2 9v6M4 7v10M20 7v10M22 9v6"/><path d="M6.5 12h11"/></svg>
+    <span>Programme</span>
+  </button>
+  <button data-tab="guide">
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20"/><path d="M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2z"/></svg>
+    <span>Guide</span>
+  </button>
+  <button data-tab="suivi">
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="4" width="18" height="18" rx="2"/><path d="M16 2v4M8 2v4M3 10h18"/><path d="M9 16l2 2 4-4"/></svg>
+    <span>Suivi</span>
+  </button>
+</nav>
+
+<div class="save-pill" id="save-pill">Enregistré</div>
+
+<script>
+/* =====================================================================
+   DONNÉES
+   ===================================================================== */
+const SESSIONS = [
+  {
+    id:1, roman:"I", title:"Séance 1",
+    focus:"Push dominant — pectoraux (incliné), épaules, triceps, dos en secondaire",
+    exercises:[
+      { id:"s1e1", name:"Développé incliné (barre ou haltères)", reps:"4-6 / 6-8 / 8-10", rest:"2'30''",
+        note:"Top set puis -10% du poids à chaque série",
+        muscles:"Haut des pectoraux, épaules avant, triceps",
+        position:"Banc incliné à 30-45°, dos plaqué au banc, pieds à plat au sol, barre ou haltères au niveau du haut des pectoraux, prise un peu plus large que les épaules.",
+        steps:["Inspire, descends la charge jusqu'à toucher légèrement le haut de la poitrine, coudes à environ 45° du buste (ni collés, ni à 90°).",
+               "Pousse en expirant, sans verrouiller complètement les coudes en haut.",
+               "Garde les omoplates serrées et le bas du dos légèrement cambré, sans décoller les fesses du banc."],
+        mistakes:["Cambrer excessivement le bas du dos.","Laisser les coudes partir trop en arrière (risque épaule).","Faire rebondir la charge sur la poitrine."],
+        variant:null },
+      { id:"s1e2", name:"Tractions lestées prise neutre", reps:"4-6 / 6-8 / 8-10", rest:"2'",
+        note:"Top set puis -10% du poids à chaque série",
+        muscles:"Dorsaux, biceps, avant-bras",
+        position:"Suspendu à la barre, prise neutre (paumes face à face), bras tendus, épaules engagées vers le bas — pas relâchées ni « pendues ».",
+        steps:["Tire en amenant les coudes vers le bas et vers l'arrière, poitrine vers la barre.","Monte jusqu'à ce que le menton dépasse la barre.","Redescends en contrôlant, bras complètement tendus en bas avant de retirer."],
+        mistakes:["Tirer uniquement avec les bras sans engager le dos.","Se balancer avec les jambes pour s'aider.","Redescendre trop vite, sans contrôle."],
+        variant:"Si tu ne peux pas encore faire de tractions à ton poids de corps, utilise une machine de tractions assistées ou le tirage vertical à la poulie, même prise, même amplitude." },
+      { id:"s1e3", name:"Développé militaire assis (haltères)", reps:"8-12", rest:"1'30''",
+        note:"Solliciter les épaules sans tricher",
+        muscles:"Épaules (deltoïde avant et moyen), triceps",
+        position:"Assis, dos droit contre le dossier si possible, haltères à hauteur d'épaules, paumes tournées vers l'avant.",
+        steps:["Pousse les haltères au-dessus de la tête en expirant, sans les cogner en haut.","Redescends en contrôlant jusqu'aux épaules.","Garde le dos gainé pendant tout le mouvement, pas de cambrure pour « aider » à pousser."],
+        mistakes:["Cambrer le bas du dos pour pousser plus lourd.","Descendre trop vite sans contrôle.","Pousser les haltères vers l'avant plutôt que vers le haut."],
+        variant:null },
+      { id:"s1e4", name:"Dips (lestés si possible)", reps:"10-15", rest:"1'30''-2'",
+        note:"Torse penché en avant pour le pec",
+        muscles:"Pectoraux (bas), triceps, épaules avant",
+        position:"Bras tendus en appui sur les barres parallèles, corps suspendu, buste légèrement penché en avant pour cibler les pectoraux.",
+        steps:["Descends en pliant les coudes jusqu'à sentir un bon stretch dans les pecs/épaules (coudes autour de 90°).","Remonte en poussant, sans verrouiller brutalement les coudes en haut."],
+        mistakes:["Descendre trop bas si ça tire dans l'épaule — c'est un signal d'arrêt.","Garder le buste trop droit (ça sollicite surtout le triceps, pas le pec)."],
+        variant:"Utilise la machine de dips assistés, ou pose les pieds au sol pour retirer une partie de ton poids, en attendant de gérer ton poids de corps complet." },
+      { id:"s1e5", name:"Superset : Curl incliné &amp; Skull crusher", reps:"10-15 &amp; 10-15", rest:"30-45''",
+        note:"1 méga série, pas de repos entre les 2", isSuperset:true,
+        parts:[
+          { name:"Curl incliné (haltères)", muscles:"Biceps",
+            position:"Assis sur un banc incliné à 45-60°, dos plaqué au banc, bras tendus vers le bas.",
+            steps:["Fléchis le coude en gardant le bras collé au buste tout le long.","Monte l'haltère, contracte 1 seconde en haut.","Redescends en contrôlant, sans lâcher le poids en bas."],
+            mistakes:["Balancer le buste pour aider à monter.","Décoller le coude vers l'avant en montant."] },
+          { name:"Skull crusher (extension triceps couché, barre EZ)", muscles:"Triceps",
+            position:"Allongé sur un banc, bras tendus à la verticale au-dessus des épaules, barre EZ en mains.",
+            steps:["Plie les coudes en amenant la barre vers le front — pas vers le cou.","Garde les coudes fixes, ils ne bougent pas vers l'avant ou l'arrière.","Remonte en tendant les bras."],
+            mistakes:["Laisser les coudes s'écarter ou bouger.","Aller trop vite et perdre le contrôle de la barre près du visage."] }
+        ] }
+    ]
+  },
+  {
+    id:2, roman:"II", title:"Séance 2",
+    focus:"Pectoraux (plat) + dos largeur + arrière épaule + bras",
+    exercises:[
+      { id:"s2e1", name:"Développé couché (barre)", reps:"4-6 / 6-8 / 8-10", rest:"2'30''",
+        note:"Top set puis -10% du poids à chaque série",
+        muscles:"Pectoraux (milieu/globalité), triceps, épaules avant",
+        position:"Allongé sur un banc plat, pieds à plat au sol, barre au niveau du milieu de la poitrine (mamelons), prise un peu plus large que les épaules.",
+        steps:["Inspire, descends la barre en contrôlant jusqu'à toucher légèrement le milieu de la poitrine, coudes à environ 45° du buste.","Pousse en expirant, sans verrouiller complètement les coudes en haut.","Garde les omoplates serrées et les pieds bien ancrés au sol pendant toute la série."],
+        mistakes:["Faire rebondir la barre sur la poitrine.","Décoller les fesses du banc pour pousser plus lourd.","Coudes à 90° du buste (trop ouverts, stress sur l'épaule)."],
+        variant:null },
+      { id:"s2e2", name:"Tirage vertical poulie (lat pulldown), prise large", reps:"4-6 / 6-8 / 8-10", rest:"2'",
+        note:"Top set puis -10% du poids à chaque série",
+        muscles:"Dorsaux (largeur), biceps",
+        position:"Assis, cuisses calées sous les rouleaux, barre large en mains, bras tendus au-dessus de la tête.",
+        steps:["Tire la barre vers le haut de la poitrine en amenant les coudes vers le bas et vers l'arrière.","Contracte le dos en bas du mouvement, poitrine légèrement sortie.","Remonte en contrôlant, bras complètement tendus en haut."],
+        mistakes:["Tirer la barre derrière la nuque (mauvais pour les épaules).","Se pencher en arrière et utiliser le poids du corps plutôt que le dos.","Remonter trop vite sans contrôle."],
+        variant:null },
+      { id:"s2e3", name:"Écarté couché (haltères) ou pec deck", reps:"10-15", rest:"1'",
+        note:"Isolation pec, amplitude complète",
+        muscles:"Pectoraux (isolation)",
+        position:"Allongé sur un banc plat, haltères au-dessus de la poitrine, bras légèrement fléchis et fixes (ou assis sur la machine pec deck, avant-bras contre les coussinets).",
+        steps:["Ouvre les bras sur les côtés en gardant le léger angle au coude, jusqu'à sentir un stretch dans les pecs.","Remonte en refermant les bras comme si tu enlaçais un tronc d'arbre, contracte en haut."],
+        mistakes:["Plier/déplier le coude pendant le mouvement (ça devient un développé).","Descendre trop bas et forcer sur l'épaule."],
+        variant:null },
+      { id:"s2e4", name:"Oiseau (rear delt fly)", reps:"10-15", rest:"1'",
+        note:"Focus arrière d'épaule / posture",
+        muscles:"Arrière d'épaule, haut du dos",
+        position:"Buste penché en avant à environ 45°, dos droit, haltères légers en mains, bras tendus vers le sol.",
+        steps:["Lève les bras sur les côtés jusqu'à hauteur des épaules, coudes légèrement fléchis et fixes.","Contracte entre les omoplates en haut du mouvement.","Redescends en contrôlant."],
+        mistakes:["Redresser le buste pour aider à lever plus lourd.","Balancer les bras au lieu de contrôler le mouvement."],
+        variant:null },
+      { id:"s2e5", name:"Superset : Curl marteau &amp; Extension triceps poulie", reps:"10-15 &amp; 10-15", rest:"30-45''",
+        note:"1 méga série, pas de repos entre les 2", isSuperset:true,
+        parts:[
+          { name:"Curl marteau (haltères)", muscles:"Biceps, avant-bras",
+            position:"Debout ou assis, haltères en mains, prise neutre (paumes face à face, comme si tu tenais un marteau).",
+            steps:["Fléchis les coudes en gardant les bras collés au buste et la prise neutre du début à la fin.","Contracte en haut, redescends en contrôlant."],
+            mistakes:["Tourner le poignet pendant le mouvement.","Balancer le buste pour aider à monter."] },
+          { name:"Extension triceps poulie (corde ou barre)", muscles:"Triceps",
+            position:"Face à la poulie haute, coudes collés au buste, avant-bras parallèles au sol au départ.",
+            steps:["Tends les bras vers le bas en gardant les coudes fixes et collés au corps.","Contracte en bas, remonte en contrôlant sans que les coudes ne bougent."],
+            mistakes:["Décoller les coudes du buste.","Utiliser tout le corps pour pousser plus lourd."] }
+        ] }
+    ]
+  },
+  {
+    id:3, roman:"III", title:"Séance 3",
+    focus:"Pull dominant — dos, épaules, biceps",
+    exercises:[
+      { id:"s3e1", name:"Rowing bûcheron (un bras, haltère)", reps:"4-6 / 6-8 / 8-10", rest:"1'/côté",
+        note:"Top set puis -10% du poids à chaque série",
+        muscles:"Dorsaux, milieu du dos",
+        position:"Un genou et une main posés sur un banc, l'autre pied au sol, dos droit et à peu près parallèle au sol, haltère dans la main libre, bras tendu vers le bas.",
+        steps:["Tire l'haltère vers la hanche en amenant le coude vers l'arrière.","Contracte le dos en haut du mouvement.","Redescends en contrôlant, bras tendu."],
+        mistakes:["Tourner le buste pour tirer plus haut.","Dos qui s'arrondit."],
+        variant:null },
+      { id:"s3e2", name:"Tirage horizontal (poulie basse)", reps:"8-12", rest:"2'",
+        note:"Rétraction scapulaire en fin de mouvement",
+        muscles:"Dorsaux, milieu du dos, biceps",
+        position:"Assis, pieds calés sur les repose-pieds, buste droit, poignée en mains, bras tendus devant toi.",
+        steps:["Tire la poignée vers le nombril en amenant les coudes vers l'arrière.","Rapproche les omoplates en fin de mouvement.","Reviens en contrôlant, bras tendus, sans arrondir le dos."],
+        mistakes:["Se pencher en arrière pour tirer plus fort.","Dos qui s'arrondit à la fin du retour."],
+        variant:null },
+      { id:"s3e3", name:"Upright row", reps:"10-15", rest:"1'",
+        note:"Coudes qui montent, pas les épaules",
+        muscles:"Épaules (deltoïde moyen), trapèzes",
+        position:"Debout, barre ou haltères tenus devant les cuisses, prise resserrée.",
+        steps:["Monte la charge le long du corps en menant le mouvement avec les coudes.","Monte jusqu'à hauteur de poitrine environ, coudes toujours plus hauts que les mains.","Redescends en contrôlant."],
+        mistakes:["Monter trop haut (risque épaule).","Tirer avec les mains plutôt que de mener avec les coudes."],
+        variant:null },
+      { id:"s3e4", name:"Élévations latérales", reps:"10-20", rest:"30''/côté",
+        note:"Léger, focus deltoïde moyen",
+        muscles:"Épaules (deltoïde moyen)",
+        position:"Debout, haltères légers en mains, bras le long du corps, léger fléchissement des coudes.",
+        steps:["Lève les bras sur les côtés jusqu'à hauteur d'épaule.","Coudes légèrement pliés et fixes tout le mouvement.","Redescends en contrôlant, sans lâcher le poids."],
+        mistakes:["Monter au-dessus de la hauteur des épaules.","Balancer le buste pour aider — ici le poids léger est normal."],
+        variant:null },
+      { id:"s3e5", name:"Superset : Curl corde poulie &amp; Extension triceps nuque", reps:"10-15 &amp; 10-15", rest:"30-45''",
+        note:"1 méga série, pas de repos entre les 2", isSuperset:true,
+        parts:[
+          { name:"Curl corde poulie", muscles:"Biceps",
+            position:"Face à la poulie basse, corde en mains, bras tendus, coudes collés au buste.",
+            steps:["Fléchis les coudes en amenant la corde vers les épaules.","Écarte légèrement les mains en haut pour bien contracter le biceps.","Redescends en contrôlant."],
+            mistakes:["Balancer le buste.","Décoller les coudes du buste."] },
+          { name:"Extension triceps nuque (poulie ou haltère)", muscles:"Triceps",
+            position:"Debout ou assis, bras au-dessus de la tête, coudes pointant vers le plafond.",
+            steps:["Descends le poids derrière la tête en pliant les coudes, sans les écarter.","Remonte en tendant les bras complètement."],
+            mistakes:["Écarter les coudes pendant le mouvement.","Cambrer le dos pour aider à tendre les bras."] }
+        ] }
+    ]
+  },
+  {
+    id:4, roman:"IV", title:"Séance 4", optional:true,
+    focus:"Ischios / fessiers dominant — hip thrust, RDL, gainage (pas indispensable si tu cours/roules beaucoup)",
+    exercises:[
+      { id:"s4e1", name:"Romanian deadlift (RDL)", reps:"8-12", rest:"1'30''",
+        note:"Hanches en arrière, jambes semi-tendues",
+        muscles:"Ischios-jambiers, fessiers, bas du dos",
+        position:"Debout, barre ou haltères devant les cuisses, genoux légèrement fléchis — pas verrouillés.",
+        steps:["Pousse les hanches vers l'arrière en gardant le dos droit (le dos ne se « plie » pas, ce sont les hanches qui bougent).","Descends la charge le long des jambes jusqu'à sentir un bon stretch dans les ischios (à peu près mi-tibia).","Remonte en poussant les hanches vers l'avant, contracte les fessiers en haut."],
+        mistakes:["Arrondir le dos.","Trop plier les genoux (le mouvement devient un squat).","Descendre plus bas que ce que la souplesse permet sans arrondir le dos."],
+        variant:null },
+      { id:"s4e2", name:"One leg hip thrust", reps:"10-15/côté", rest:"30''/côté",
+        note:"Contraction fessier en haut de mouvement",
+        muscles:"Fessiers",
+        position:"Haut du dos appuyé sur un banc, un pied au sol genou plié, l'autre jambe tendue ou repliée en l'air.",
+        steps:["Pousse par le talon au sol pour monter les hanches.","Contracte fort le fessier en haut du mouvement.","Redescends en contrôlant, sans reposer complètement les fesses au sol entre les répétitions."],
+        mistakes:["Pousser avec le bas du dos plutôt qu'avec le fessier.","Cambrer excessivement en haut du mouvement."],
+        variant:null },
+      { id:"s4e3", name:"Leg press (ou squat gobelet)", reps:"10-15", rest:"1'30''",
+        note:"Amplitude complète",
+        muscles:"Quadriceps, fessiers",
+        position:"Assis sur la machine, dos et bassin bien calés contre le siège, pieds largeur épaules sur la plateforme.",
+        steps:["Descends en pliant les genoux jusqu'à environ 90°.","Remonte en poussant, sans verrouiller complètement les genoux en haut."],
+        mistakes:["Descendre trop bas au point que le bas du dos décolle du siège.","Verrouiller brutalement les genoux en fin de poussée."],
+        variant:null },
+      { id:"s4e4", name:"Mollets assis", reps:"10-15", rest:"1'",
+        note:"Tempo contrôlé",
+        muscles:"Mollets",
+        position:"Assis à la machine, coussinets posés sur les genoux, pointes de pieds sur la plateforme.",
+        steps:["Monte sur la pointe des pieds le plus haut possible.","Contracte 1 seconde.","Redescends en étirant complètement, talons bien bas."],
+        mistakes:["Amplitude coupée.","Mouvement trop rapide."],
+        variant:null },
+      { id:"s4e5", name:"Gainage (planche + rotations)", reps:"30-45'' de maintien", rest:"45''",
+        note:"Ventre rentré, pas de cambrure",
+        muscles:"Abdominaux, obliques, transverse",
+        position:"Appui sur les avant-bras et les pointes de pieds, corps aligné tête-bassin-talons, comme une planche droite.",
+        steps:["Maintiens la position sans creuser le dos ni cambrer les lombaires.","Respire normalement, ne bloque pas ta respiration.","Pour les rotations : depuis la planche, pivote les hanches doucement d'un côté puis de l'autre en gardant les appuis fixes."],
+        mistakes:["Laisser les fesses monter ou descendre par rapport à la ligne du corps.","Bloquer la respiration."],
+        variant:null }
+    ]
+  }
+];
+
+const REST_EXERCISES = [
+  { id:"r1", name:"Pompes", reps:"4 tours de 15 rép", rest:"—",
+    muscles:"Pectoraux, triceps, épaules avant, gainage",
+    position:"Mains posées au sol un peu plus larges que les épaules, corps droit comme une planche des épaules aux talons, pieds serrés.",
+    steps:["Descends en pliant les coudes jusqu'à ce que la poitrine frôle le sol, coudes proches du corps (pas écartés à 90°).","Remonte en poussant, corps qui reste bien droit du début à la fin."],
+    mistakes:["Cambrer ou casser les hanches (le bassin qui tombe).","Écarter trop les coudes.","Amplitude coupée, ne pas descendre assez bas."],
+    variant:"Sur les genoux si les pompes classiques sont encore trop dures, en gardant le corps droit des genoux à la tête." },
+  { id:"r2", name:"Squats sautés", reps:"4 tours de 15 rép", rest:"—",
+    muscles:"Quadriceps, fessiers, mollets",
+    position:"Debout, pieds largeur épaules, comme pour un squat classique.",
+    steps:["Descends comme un squat (hanches en arrière, genoux qui plient).","Remonte en poussant fort dans le sol pour décoller les pieds en extension.","Réceptionne en souplesse, genoux légèrement fléchis, puis repars directement dans la descente suivante."],
+    mistakes:["Réceptionner jambes tendues (mauvais pour les genoux).","Genoux qui rentrent vers l'intérieur à la réception."],
+    variant:null },
+  { id:"r3", name:"Burpees", reps:"4 tours de 10 rép", rest:"—",
+    muscles:"Corps entier — cardio, épaules, jambes",
+    position:"Debout, pieds largeur épaules.",
+    steps:["Descends en squat, pose les mains au sol.","Envoie les pieds en arrière pour te retrouver en position de pompe, fais une pompe (ou une flexion de bras si trop dur).","Ramène les pieds vers les mains, puis saute en tendant les bras au-dessus de la tête."],
+    mistakes:["Aller trop vite au point de perdre la forme — ce n'est pas une course de vitesse.","Cambrer le dos en position de pompe."],
+    variant:"Retire le saut final et/ou la pompe si besoin, garde juste l'enchaînement squat → position pompe → retour debout." },
+  { id:"r4", name:"Planche (gainage)", reps:"4 tours de 30''", rest:"—",
+    muscles:"Abdominaux, gainage global",
+    position:"Appui sur les avant-bras et les pointes de pieds, corps aligné tête-bassin-talons.",
+    steps:["Maintiens la position sans creuser ni cambrer le dos.","Respire normalement, ne bloque pas ta respiration."],
+    mistakes:["Fesses trop hautes ou trop basses par rapport à la ligne du corps.","Bloquer la respiration."],
+    variant:null }
+];
+
+const PLANNING = [
+  { day:"Lundi", seance:"Séance 1 (salle)", rest:false },
+  { day:"Mardi", seance:"Repos ou vélo/course léger", rest:true },
+  { day:"Mercredi", seance:"Séance 2 (salle)", rest:false },
+  { day:"Jeudi", seance:"Repos actif", rest:true },
+  { day:"Vendredi", seance:"Séance 3 (salle)", rest:false },
+  { day:"Samedi", seance:"Séance 4 (salle, optionnel)", rest:true },
+  { day:"Dimanche", seance:"Repos complet", rest:true }
+];
+
+const ICONS = {
+  chevron:'<svg class="chevron" viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 12 15 18 9"/></svg>',
+  camera:'<svg viewBox="0 0 24 24" width="26" height="26" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M23 19a2 2 0 0 1-2 2H3a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h4l2-3h6l2 3h4a2 2 0 0 1 2 2z"/><circle cx="12" cy="13" r="4"/></svg>'
+};
+
+/* =====================================================================
+   ÉTAT + PERSISTANCE
+   ===================================================================== */
+const DAY_KEYS = PLANNING.map(p=>p.day);
+
+function emptyDay(){ return { done:false, steps:false, date:"", ressenti:"", note:"" }; }
+function emptySessionLogs(){
+  const logs = {};
+  SESSIONS.forEach(s=>{
+    logs[s.id] = s.exercises.map(ex=>({ exId:ex.id, name: stripTags(ex.name), charge:"", reps:"", ressenti:"", note:"" }));
+  });
+  return logs;
+}
+function emptyWeek(id){
+  const days = {};
+  DAY_KEYS.forEach(d=>days[d]=emptyDay());
+  return { id, dateStart:"", dateEnd:"", days, sessionLogs:emptySessionLogs(), bilan:{ poids:"", taille:"", positif:"", ajuster:"" } };
+}
+function stripTags(s){ return s.replace(/&amp;/g,"&"); }
+
+let weeks = {};
+let weekOrder = [];
+let activeWeek = 1;
+let activeTab = "programme";
+let photoCache = {};
+let saveTimer = null;
+
+async function loadState(){
+  try{
+    const raw = localStorage.getItem("agoge_weeks_v1");
+    if(raw){
+      const parsed = JSON.parse(raw);
+      weeks = parsed.weeks || {};
+      weekOrder = parsed.weekOrder || [];
+    }
+  }catch(e){ /* pas encore de données */ }
+  if(!weekOrder.length){
+    weekOrder = [1,2,3,4];
+    weekOrder.forEach(id=> weeks[id] = emptyWeek(id));
+  }
+  activeWeek = weekOrder[0];
+}
+
+function scheduleSave(){
+  clearTimeout(saveTimer);
+  saveTimer = setTimeout(()=>{
+    try{
+      localStorage.setItem("agoge_weeks_v1", JSON.stringify({weeks, weekOrder}));
+      flashSaved();
+    }catch(e){ console.error("Erreur de sauvegarde", e); }
+  }, 500);
+}
+
+function flashSaved(){
+  const pill = document.getElementById("save-pill");
+  pill.classList.add("show");
+  clearTimeout(pill._t);
+  pill._t = setTimeout(()=>pill.classList.remove("show"), 1200);
+}
+
+async function getPhoto(weekId){
+  if(photoCache[weekId] !== undefined) return photoCache[weekId];
+  try{
+    photoCache[weekId] = localStorage.getItem("agoge_photo_"+weekId) || null;
+  }catch(e){ photoCache[weekId] = null; }
+  return photoCache[weekId];
+}
+async function setPhoto(weekId, dataUrl){
+  photoCache[weekId] = dataUrl;
+  try{
+    if(dataUrl){ localStorage.setItem("agoge_photo_"+weekId, dataUrl); }
+    else{ localStorage.removeItem("agoge_photo_"+weekId); }
+    flashSaved();
+  }catch(e){ console.error("Erreur photo (image sûrement trop grande pour le stockage local)", e); }
+}
+
+/* =====================================================================
+   RENDER : PROGRAMME
+   ===================================================================== */
+function renderReview(){
+  const w = weeks[activeWeek];
+  if(!w) return "";
+  const doneCount = DAY_KEYS.filter(d=>w.days[d].done).length;
+  const gymDays = PLANNING.filter(p=>!p.rest).length;
+  const stepsCount = DAY_KEYS.filter(d=>w.days[d].steps).length;
+  return `<span>Semaine ${activeWeek}</span> · <span><b>${doneCount}</b>/${gymDays} séances</span> · <span><b>${stepsCount}</b>/7 jours à 10 000 pas</span>`;
+}
+
+function repsNoteHTML(){
+  return `<div class="note-box">
+    <div class="note-title">Pour les reps</div>
+    <ul>
+      <li>4-6 / 6-8 / 8-10 (en pyramide, charge lourde au début &amp; -10% à chaque série)</li>
+      <li>Sur les séries fixes (10-15, 8-12...) : reps jusqu'à l'échec (ou proche), et on augmente la charge quand les 3 séries atteignent le haut de la fourchette.</li>
+    </ul>
+  </div>`;
+}
+
+function planningTableHTML(){
+  const rows = PLANNING.map(p=>`<tr><td class="day-name">${p.day}</td><td class="${p.rest?'tag-rest':''}">${p.seance}</td></tr>`).join("");
+  return `<table class="plan-table"><thead><tr><th>Jour</th><th>Séance</th></tr></thead><tbody>${rows}</tbody></table>`;
+}
+
+function exerciseTableRow(ex){
+  const name = ex.isSuperset ? ex.name : ex.name;
+  return `<tr>
+    <td class="ex-name">${name}</td>
+    <td class="mono">${ex.reps}${ex.isSuperset? '' : ''} <span style="opacity:.6">×3</span></td>
+    <td class="mono">${ex.rest}</td>
+    <td class="ex-note">${ex.note}</td>
+  </tr>`;
+}
+
+function sessionCardProgrammeHTML(s){
+  const rows = s.exercises.map(exerciseTableRow).join("");
+  return `<details class="session-card">
+    <summary>
+      <div class="medallion">${s.roman}</div>
+      <div class="session-head-text">
+        <div class="session-head-title">${s.title}${s.optional?'<span class="badge-optional">optionnelle</span>':''}</div>
+        <div class="session-head-focus">${s.focus}</div>
+      </div>
+      ${ICONS.chevron}
+    </summary>
+    <div class="session-body">
+      <table class="ex-table">
+        <thead><tr><th>Exercice</th><th>Reps</th><th>Repos</th><th>Note</th></tr></thead>
+        <tbody>${rows}</tbody>
+      </table>
+    </div>
+  </details>`;
+}
+
+function restOptionsHTML(){
+  return `
+  <div class="rest-option">
+    <h3>Course à pied / vélo</h3>
+    <p>Ce que tu fais déjà : garde ton rythme habituel, c'est ton cardio. 30-40 min à allure modérée suffit pour un jour « off ».</p>
+  </div>
+  <div class="rest-option">
+    <h3>Circuit bodyweight express (15-20 min)</h3>
+    <p>4 tours de : 15 pompes, 15 squats sautés, 10 burpees, 30'' de planche. Repos 1' entre chaque tour, pas de repos entre les exercices d'un même tour. Détails dans l'onglet Guide.</p>
+  </div>
+  <div class="rest-option">
+    <h3>Foot à 5</h3>
+    <p>Fait très bien le job de cardio + jambes ces jours-là — pas besoin d'ajouter autre chose à côté.</p>
+  </div>
+  <div class="rest-option">
+    <h3>Repos complet</h3>
+    <p>Si tu sens une vraie fatigue (courbatures, sommeil, moral) : repos complet, aucune option n'est obligatoire.</p>
+  </div>`;
+}
+
+function renderProgramme(){
+  const el = document.getElementById("tab-programme");
+  el.innerHTML = `
+    <section class="block">
+      <h2 class="block-title">Planning hebdomadaire</h2>
+      <p class="block-sub">Focus haut du corps sur 3 séances. Les jambes sont déjà pas mal sollicitées par la course et le vélo — la séance 4 reste optionnelle.</p>
+      ${planningTableHTML()}
+    </section>
+    <section class="block">
+      <h2 class="block-title">Les séances</h2>
+      ${repsNoteHTML()}
+      ${SESSIONS.map(sessionCardProgrammeHTML).join("")}
+    </section>
+    <section class="block">
+      <h2 class="block-title">Jours off (sans salle)</h2>
+      ${restOptionsHTML()}
+    </section>
+  `;
+}
+
+/* =====================================================================
+   RENDER : GUIDE
+   ===================================================================== */
+function exerciseDetailHTML(ex){
+  const mistakes = ex.mistakes.map(m=>`<li>${m}</li>`).join("");
+  const steps = ex.steps.map(s=>`<li>${s}</li>`).join("");
+  return `
+    <div class="ex-meta"><b>${stripTags(ex.name)}</b> — ${ex.muscles}</div>
+    <div class="ex-label">Position de départ</div>
+    <p class="ex-text">${ex.position}</p>
+    <div class="ex-label">Exécution</div>
+    <ol class="ex-steps">${steps}</ol>
+    <div class="ex-label">Erreurs à éviter</div>
+    <ul class="ex-mistakes">${mistakes}</ul>
+    ${ex.variant?`<div class="ex-variant"><b>Variante débutant :</b> ${ex.variant}</div>`:""}
+  `;
+}
+
+function exerciseAccordionHTML(ex){
+  if(ex.isSuperset){
+    const body = ex.parts.map((part,i)=>`
+      <div class="superset-label">${i===0?'Partie 1':'Partie 2'} du superset — s\'enchaîne sans repos</div>
+      ${exerciseDetailHTML(part)}
+      ${i===0?'<div style="height:10px;border-top:1px dashed var(--line);margin:10px 0;"></div>':''}
+    `).join("");
+    return `<details class="ex-detail">
+      <summary>${ICONS.chevron} <span>${stripTags(ex.name)}</span></summary>
+      <div class="ex-detail-body">${body}</div>
+    </details>`;
+  }
+  return `<details class="ex-detail">
+    <summary>${ICONS.chevron} <span>${ex.name}</span></summary>
+    <div class="ex-detail-body">${exerciseDetailHTML(ex)}</div>
+  </details>`;
+}
+
+function sessionCardGuideHTML(s){
+  const items = s.exercises.map(exerciseAccordionHTML).join("");
+  return `<details class="session-card">
+    <summary>
+      <div class="medallion">${s.roman}</div>
+      <div class="session-head-text">
+        <div class="session-head-title">${s.title}${s.optional?'<span class="badge-optional">optionnelle</span>':''}</div>
+        <div class="session-head-focus">${s.focus}</div>
+      </div>
+      ${ICONS.chevron}
+    </summary>
+    <div class="session-body">${items}</div>
+  </details>`;
+}
+
+function renderGuide(){
+  const el = document.getElementById("tab-guide");
+  const restItems = REST_EXERCISES.map(exerciseAccordionHTML).join("");
+  el.innerHTML = `
+    <section class="block">
+      <h2 class="block-title">Avant de commencer</h2>
+      <ul class="note-box" style="list-style:none;">
+        <li>Échauffement 5 à 8 min : vélo ou rameur léger, puis quelques rotations d'épaules, de hanches, et 1-2 séries très légères de l'exercice principal.</li>
+        <li>Respiration : inspire en descendant / en phase de charge, expire en poussant / en phase d'effort.</li>
+        <li>Amplitude avant charge : mieux vaut un poids plus léger avec le mouvement complet qu'un poids lourd avec une amplitude coupée.</li>
+        <li>Aucune articulation ne se « verrouille » brutalement en fin de mouvement — garde toujours un tout petit degré de flexion.</li>
+      </ul>
+    </section>
+    <section class="block">
+      <h2 class="block-title">Les séances</h2>
+      ${SESSIONS.map(sessionCardGuideHTML).join("")}
+    </section>
+    <section class="block">
+      <h2 class="block-title">Jours de repos actif</h2>
+      <p class="block-sub">Le détail posture/exécution des exercices du circuit bodyweight express.</p>
+      <details class="session-card">
+        <summary>
+          <div class="medallion">✦</div>
+          <div class="session-head-text">
+            <div class="session-head-title">Circuit bodyweight</div>
+            <div class="session-head-focus">Pompes, squats sautés, burpees, planche</div>
+          </div>
+          ${ICONS.chevron}
+        </summary>
+        <div class="session-body">${restItems}</div>
+      </details>
+    </section>
+  `;
+}
+
+/* =====================================================================
+   RENDER : SUIVI
+   ===================================================================== */
+function weekTabsHTML(){
+  const btns = weekOrder.map(id=>`<button class="week-tab-btn ${id===activeWeek?'active':''}" data-week="${id}">Semaine ${id}</button>`).join("");
+  return `<div class="week-tabs">${btns}<button class="week-tab-add" id="add-week-btn">+ Semaine</button></div>`;
+}
+
+function dailyTableHTML(w){
+  const rows = PLANNING.map(p=>{
+    const d = w.days[p.day];
+    const ressentiOpts = [1,2,3,4,5].map(n=>`<option value="${n}" ${String(d.ressenti)===String(n)?'selected':''}>${n}</option>`).join("");
+    return `<tr>
+      <td class="day-cell">${p.day}</td>
+      <td class="seance-cell">${p.seance}</td>
+      <td class="check-cell"><input type="checkbox" data-kind="day" data-day="${p.day}" data-field="done" ${d.done?'checked':''}></td>
+      <td class="check-cell"><input type="checkbox" data-kind="day" data-day="${p.day}" data-field="steps" ${d.steps?'checked':''}></td>
+      <td><input type="date" data-kind="day" data-day="${p.day}" data-field="date" value="${d.date}"></td>
+      <td><select data-kind="day" data-day="${p.day}" data-field="ressenti"><option value="">–</option>${ressentiOpts}</select></td>
+      <td><input type="text" data-kind="day" data-day="${p.day}" data-field="note" value="${escapeAttr(d.note)}" placeholder="note"></td>
+    </tr>`;
+  }).join("");
+  return `<table class="log-table">
+    <thead><tr><th>Jour</th><th>Séance</th><th>Fait</th><th>10K pas</th><th>Date</th><th>Ressenti</th><th>Note</th></tr></thead>
+    <tbody>${rows}</tbody>
+  </table>`;
+}
+
+function sessionLogTableHTML(w, session){
+  const logs = w.sessionLogs[session.id];
+  const rows = logs.map((row,idx)=>`<tr>
+    <td class="ex-name-cell">${row.name}</td>
+    <td><input type="text" data-kind="log" data-session="${session.id}" data-idx="${idx}" data-field="charge" value="${escapeAttr(row.charge)}" placeholder="kg"></td>
+    <td><input type="text" data-kind="log" data-session="${session.id}" data-idx="${idx}" data-field="reps" value="${escapeAttr(row.reps)}" placeholder="8/7/6"></td>
+    <td><input type="text" data-kind="log" data-session="${session.id}" data-idx="${idx}" data-field="ressenti" value="${escapeAttr(row.ressenti)}" placeholder="/5"></td>
+    <td><input type="text" data-kind="log" data-session="${session.id}" data-idx="${idx}" data-field="note" value="${escapeAttr(row.note)}" placeholder="note"></td>
+  </tr>`).join("");
+  return `<details class="session-card">
+    <summary>
+      <div class="medallion">${session.roman}</div>
+      <div class="session-head-text">
+        <div class="session-head-title">${session.title}${session.optional?'<span class="badge-optional">optionnelle</span>':''}</div>
+      </div>
+      ${ICONS.chevron}
+    </summary>
+    <div class="session-body">
+      <table class="log-table session-log-table">
+        <thead><tr><th>Exercice</th><th>Charge</th><th>Reps</th><th>Ressenti</th><th>Note</th></tr></thead>
+        <tbody>${rows}</tbody>
+      </table>
+    </div>
+  </details>`;
+}
+
+function escapeAttr(s){ return (s||"").replace(/&/g,"&amp;").replace(/"/g,"&quot;"); }
+
+async function bilanHTML(w){
+  const photo = await getPhoto(w.id);
+  return `
+    <div class="photo-zone ${photo?'has-photo':''}" id="photo-zone">
+      ${photo?`<img src="${photo}" alt="Photo semaine ${w.id}">`:`
+        <div class="photo-placeholder">
+          ${ICONS.camera}
+          <div>Ajoute une photo de fin de semaine</div>
+        </div>`}
+      <div class="photo-actions">
+        <label class="btn">${photo?'Remplacer':'Ajouter une photo'}<input type="file" accept="image/*" capture="environment" id="photo-input" style="display:none"></label>
+        ${photo?'<button class="btn btn-danger" id="photo-remove">Retirer</button>':''}
+      </div>
+    </div>
+    <div class="bilan-grid">
+      <div class="field">
+        <label class="field-label">Poids du corps (kg)</label>
+        <input type="text" data-kind="bilan" data-field="poids" value="${escapeAttr(w.bilan.poids)}" placeholder="ex: 72">
+      </div>
+      <div class="field">
+        <label class="field-label">Tour de taille (cm)</label>
+        <input type="text" data-kind="bilan" data-field="taille" value="${escapeAttr(w.bilan.taille)}" placeholder="optionnel">
+      </div>
+    </div>
+    <div class="field" style="margin-bottom:10px;">
+      <label class="field-label">Ce qui a bien fonctionné</label>
+      <textarea data-kind="bilan" data-field="positif">${w.bilan.positif}</textarea>
+    </div>
+    <div class="field">
+      <label class="field-label">Ce qu'il faut ajuster</label>
+      <textarea data-kind="bilan" data-field="ajuster">${w.bilan.ajuster}</textarea>
+    </div>
+  `;
+}
+
+async function renderSuivi(){
+  const el = document.getElementById("tab-suivi");
+  const w = weeks[activeWeek];
+  el.innerHTML = `
+    ${weekTabsHTML()}
+    <section class="block">
+      <div class="date-range">
+        <input type="date" id="week-start" value="${w.dateStart}">
+        <span>au</span>
+        <input type="date" id="week-end" value="${w.dateEnd}">
+      </div>
+      <h2 class="block-title">Vue de la semaine</h2>
+      <p class="block-sub">Objectif 10 000 pas par jour, salle ou repos inclus.</p>
+      ${dailyTableHTML(w)}
+    </section>
+    <section class="block">
+      <h2 class="block-title">Détail des séances</h2>
+      ${SESSIONS.map(s=>sessionLogTableHTML(w,s)).join("")}
+    </section>
+    <section class="block">
+      <h2 class="block-title">Bilan de fin de semaine</h2>
+      <div id="bilan-zone">Chargement…</div>
+    </section>
+  `;
+  document.getElementById("bilan-zone").innerHTML = await bilanHTML(w);
+  bindSuiviEvents();
+}
+
+function bindSuiviEvents(){
+  const panel = document.getElementById("tab-suivi");
+
+  panel.querySelectorAll('.week-tab-btn').forEach(btn=>{
+    btn.addEventListener('click', ()=>{
+      activeWeek = parseInt(btn.dataset.week,10);
+      renderSuivi();
+      renderWeekStrip();
+    });
+  });
+  const addBtn = document.getElementById('add-week-btn');
+  if(addBtn){
+    addBtn.addEventListener('click', ()=>{
+      const nextId = Math.max(...weekOrder)+1;
+      weekOrder.push(nextId);
+      weeks[nextId] = emptyWeek(nextId);
+      activeWeek = nextId;
+      scheduleSave();
+      renderSuivi();
+      renderWeekStrip();
+    });
+  }
+
+  const w = weeks[activeWeek];
+
+  document.getElementById('week-start').addEventListener('change', e=>{ w.dateStart = e.target.value; scheduleSave(); });
+  document.getElementById('week-end').addEventListener('change', e=>{ w.dateEnd = e.target.value; scheduleSave(); });
+
+  panel.querySelectorAll('input[data-kind="day"], select[data-kind="day"]').forEach(inp=>{
+    const evt = inp.type==='checkbox' ? 'change' : (inp.tagName==='SELECT' ? 'change' : 'input');
+    inp.addEventListener(evt, e=>{
+      const day = inp.dataset.day, field = inp.dataset.field;
+      w.days[day][field] = inp.type==='checkbox' ? inp.checked : inp.value;
+      scheduleSave();
+      if(field==='done' || field==='steps'){ renderWeekStrip(); }
+    });
+  });
+
+  panel.querySelectorAll('input[data-kind="log"]').forEach(inp=>{
+    inp.addEventListener('input', e=>{
+      const sid = inp.dataset.session, idx = parseInt(inp.dataset.idx,10), field = inp.dataset.field;
+      w.sessionLogs[sid][idx][field] = inp.value;
+      scheduleSave();
+    });
+  });
+
+  panel.querySelectorAll('[data-kind="bilan"]').forEach(inp=>{
+    inp.addEventListener('input', e=>{
+      w.bilan[inp.dataset.field] = inp.value;
+      scheduleSave();
+    });
+  });
+
+  const photoInput = document.getElementById('photo-input');
+  if(photoInput){
+    photoInput.addEventListener('change', async e=>{
+      const file = e.target.files[0];
+      if(!file) return;
+      const dataUrl = await resizeImage(file, 640, 0.72);
+      await setPhoto(activeWeek, dataUrl);
+      renderSuivi();
+    });
+  }
+  const photoRemove = document.getElementById('photo-remove');
+  if(photoRemove){
+    photoRemove.addEventListener('click', async ()=>{
+      await setPhoto(activeWeek, null);
+      renderSuivi();
+    });
+  }
+}
+
+function resizeImage(file, maxWidth, quality){
+  return new Promise((resolve,reject)=>{
+    const reader = new FileReader();
+    reader.onload = ()=>{
+      const img = new Image();
+      img.onload = ()=>{
+        let w = img.width, h = img.height;
+        if(w > maxWidth){ h = Math.round(h * (maxWidth/w)); w = maxWidth; }
+        const canvas = document.createElement('canvas');
+        canvas.width = w; canvas.height = h;
+        const ctx = canvas.getContext('2d');
+        ctx.drawImage(img,0,0,w,h);
+        resolve(canvas.toDataURL('image/jpeg', quality));
+      };
+      img.onerror = reject;
+      img.src = reader.result;
+    };
+    reader.onerror = reject;
+    reader.readAsDataURL(file);
+  });
+}
+
+/* =====================================================================
+   NAVIGATION + INIT
+   ===================================================================== */
+function renderWeekStrip(){
+  document.getElementById('week-strip').innerHTML = renderReview();
+}
+
+function setTab(tab){
+  activeTab = tab;
+  document.querySelectorAll('.tab-panel').forEach(p=>p.classList.remove('active'));
+  document.getElementById('tab-'+tab).classList.add('active');
+  document.querySelectorAll('nav.tabbar button').forEach(b=>b.classList.toggle('active', b.dataset.tab===tab));
+  window.scrollTo({top:0, behavior:'instant'});
+}
+
+document.querySelectorAll('nav.tabbar button').forEach(btn=>{
+  btn.addEventListener('click', ()=> setTab(btn.dataset.tab));
+});
+
+async function init(){
+  await loadState();
+  renderProgramme();
+  renderGuide();
+  await renderSuivi();
+  renderWeekStrip();
+}
+init();
+</script>
+</body>
+</html>
