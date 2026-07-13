@@ -4,6 +4,22 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 <title>AGOGE — Programme de musculation</title>
+<script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-app-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-database-compat.js"></script>
+<script>
+/* =====================================================================
+   CONFIG FIREBASE — À REMPLACER
+   Va dans ton projet Firebase > Paramètres du projet > tes applis Web
+   et colle ici l'objet firebaseConfig fourni par Firebase.
+   Tant que apiKey vaut "REMPLACE_MOI", l'app fonctionne en local uniquement
+   (pas de synchro entre appareils).
+   ===================================================================== */
+const firebaseConfig = {
+  apiKey: "AIzaSyBoImlzTiJTFuB-6P2c7LspiPe5iWg6Fok",
+  databaseURL: "https://why-are-you-you-are-gay-default-rtdb.europe-west1.firebasedatabase.app",
+  projectId: "why-are-you-you-are-gay"
+};
+</script>
 <style>
 @import url('https://fonts.googleapis.com/css2?family=Cinzel:wght@600;700&family=Work+Sans:ital,wght@0,400;0,500;0,600;0,700;1,400&family=IBM+Plex+Mono:wght@500;600&display=swap');
 
@@ -349,6 +365,7 @@ nav.tabbar button svg{width:20px; height:20px;}
     </div>
   </div>
   <div class="week-strip" id="week-strip"></div>
+  <div id="sync-banner" style="display:none; margin-top:8px; font-size:11.5px; color:var(--gold-soft); font-family:var(--font-mono);"></div>
 </header>
 
 <main>
@@ -630,30 +647,103 @@ let activeWeek = 1;
 let activeTab = "programme";
 let photoCache = {};
 let saveTimer = null;
+let photoSaveTimers = {};
+let syncEnabled = false;
+let syncOk = false;
+let db = null;
+
+function initFirebase(){
+  if(firebaseConfig.apiKey === "REMPLACE_MOI"){ syncEnabled = false; return; }
+  try{
+    firebase.initializeApp(firebaseConfig);
+    db = firebase.database();
+    syncEnabled = true;
+  }catch(e){ console.error("Erreur d'init Firebase", e); syncEnabled = false; }
+}
+
+function showSyncBanner(kind){
+  const el = document.getElementById("sync-banner");
+  if(!el) return;
+  if(kind === "none"){
+    el.textContent = "Synchro non configurée — les données restent uniquement sur cet appareil.";
+    el.style.display = "block";
+  } else if(kind === "offline"){
+    el.textContent = "Synchro indisponible pour le moment — sauvegarde locale uniquement.";
+    el.style.display = "block";
+  } else {
+    el.style.display = "none";
+  }
+}
 
 async function loadState(){
+  // 1) cache local instantané (affichage rapide, aussi filet de sécurité)
+  let hadLocalData = false;
   try{
     const raw = localStorage.getItem("agoge_weeks_v1");
     if(raw){
       const parsed = JSON.parse(raw);
       weeks = parsed.weeks || {};
       weekOrder = parsed.weekOrder || [];
+      hadLocalData = weekOrder.length > 0;
     }
-  }catch(e){ /* pas encore de données */ }
+  }catch(e){ /* rien en local */ }
+
+  // 2) si la synchro est configurée, on tente de lire la version en ligne (source de vérité)
+  let remoteHadData = false;
+  if(syncEnabled){
+    try{
+      const snap = await db.ref("agoge_weeks_v1").once("value");
+      const val = snap.val();
+      if(val && val.weeks && val.weekOrder && val.weekOrder.length){
+        weeks = val.weeks;
+        weekOrder = val.weekOrder;
+        remoteHadData = true;
+      }
+      syncOk = true;
+      showSyncBanner("ok");
+    }catch(e){
+      console.error("Erreur de lecture Firebase", e);
+      syncOk = false;
+      showSyncBanner("offline");
+    }
+  } else {
+    showSyncBanner("none");
+  }
+
   if(!weekOrder.length){
     weekOrder = [1,2,3,4];
     weekOrder.forEach(id=> weeks[id] = emptyWeek(id));
   }
   activeWeek = weekOrder[0];
+
+  // 3) premier branchement de la synchro : si ce téléphone/ordi a déjà des données
+  //    locales mais que le cloud est encore vide, on les envoie tout de suite
+  //    pour ne pas risquer de les perdre au prochain appareil qui se connecte.
+  if(syncEnabled && !remoteHadData && hadLocalData){
+    try{ await db.ref("agoge_weeks_v1").set({weeks, weekOrder}); }
+    catch(e){ console.error("Erreur d'envoi initial vers Firebase", e); }
+  }
 }
 
 function scheduleSave(){
   clearTimeout(saveTimer);
-  saveTimer = setTimeout(()=>{
-    try{
-      localStorage.setItem("agoge_weeks_v1", JSON.stringify({weeks, weekOrder}));
-      flashSaved();
-    }catch(e){ console.error("Erreur de sauvegarde", e); }
+  saveTimer = setTimeout(async ()=>{
+    // toujours écrire en local d'abord (rapide, fiable hors-ligne)
+    try{ localStorage.setItem("agoge_weeks_v1", JSON.stringify({weeks, weekOrder})); }
+    catch(e){ console.error("Erreur de sauvegarde locale", e); }
+
+    if(syncEnabled){
+      try{
+        await db.ref("agoge_weeks_v1").set({weeks, weekOrder});
+        syncOk = true;
+        showSyncBanner("ok");
+      }catch(e){
+        console.error("Erreur de sauvegarde Firebase", e);
+        syncOk = false;
+        showSyncBanner("offline");
+      }
+    }
+    flashSaved();
   }, 500);
 }
 
@@ -666,18 +756,41 @@ function flashSaved(){
 
 async function getPhoto(weekId){
   if(photoCache[weekId] !== undefined) return photoCache[weekId];
-  try{
-    photoCache[weekId] = localStorage.getItem("agoge_photo_"+weekId) || null;
-  }catch(e){ photoCache[weekId] = null; }
-  return photoCache[weekId];
+  let localValue = null;
+  try{ localValue = localStorage.getItem("agoge_photo_"+weekId) || null; }catch(e){ /* rien en local */ }
+  let value = localValue;
+  if(syncEnabled){
+    try{
+      const snap = await db.ref("agoge_photos/"+weekId).once("value");
+      const remote = snap.val();
+      if(remote){
+        value = remote;
+      } else if(localValue){
+        // le cloud n'a pas encore cette photo mais cet appareil oui : on l'envoie
+        try{ await db.ref("agoge_photos/"+weekId).set(localValue); }
+        catch(e){ console.error("Erreur d'envoi initial de la photo", e); }
+      }
+    }catch(e){ console.error("Erreur lecture photo Firebase", e); }
+  }
+  photoCache[weekId] = value;
+  return value;
 }
+
 async function setPhoto(weekId, dataUrl){
   photoCache[weekId] = dataUrl;
   try{
     if(dataUrl){ localStorage.setItem("agoge_photo_"+weekId, dataUrl); }
     else{ localStorage.removeItem("agoge_photo_"+weekId); }
-    flashSaved();
-  }catch(e){ console.error("Erreur photo (image sûrement trop grande pour le stockage local)", e); }
+  }catch(e){ console.error("Erreur photo locale (image sûrement trop grande)", e); }
+
+  if(syncEnabled){
+    try{
+      if(dataUrl){ await db.ref("agoge_photos/"+weekId).set(dataUrl); }
+      else{ await db.ref("agoge_photos/"+weekId).remove(); }
+      syncOk = true; showSyncBanner("ok");
+    }catch(e){ console.error("Erreur photo Firebase", e); syncOk = false; showSyncBanner("offline"); }
+  }
+  flashSaved();
 }
 
 /* =====================================================================
@@ -1096,6 +1209,7 @@ document.querySelectorAll('nav.tabbar button').forEach(btn=>{
 });
 
 async function init(){
+  initFirebase();
   await loadState();
   renderProgramme();
   renderGuide();
