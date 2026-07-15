@@ -507,17 +507,16 @@ const ICONS = {
 const DAY_KEYS = PLANNING.map(p=>p.day);
 
 function emptyDay(){ return { done:false, steps:false, date:"", ressenti:"", note:"" }; }
-function emptySessionLogs(){
-  const logs = {};
-  SESSIONS.forEach(s=>{
-    logs[s.id] = s.exercises.map(ex=>({ exId:ex.id, name: stripTags(ex.name), charge:"", reps:"", ressenti:"", note:"" }));
-  });
-  return logs;
+function emptyInstanceLog(){
+  return SESSIONS[0].exercises.map(ex=>({ exId:ex.id, name: stripTags(ex.name), charge:"", reps:"", ressenti:"", note:"" }));
+}
+function emptyInstance(id){
+  return { id, date:"", log: emptyInstanceLog() };
 }
 function emptyWeek(id){
   const days = {};
   DAY_KEYS.forEach(d=>days[d]=emptyDay());
-  return { id, dateStart:"", dateEnd:"", days, sessionLogs:emptySessionLogs(), bilan:{ poids:"", taille:"", positif:"", ajuster:"" } };
+  return { id, dateStart:"", dateEnd:"", days, sessionInstances:[emptyInstance(1)], nextInstanceId:2, bilan:{ poids:"", taille:"", positif:"", ajuster:"" } };
 }
 function stripTags(s){ return s.replace(/&amp;/g,"&"); }
 
@@ -594,6 +593,26 @@ async function loadState(){
     weekOrder = [1,2,3,4];
     weekOrder.forEach(id=> weeks[id] = emptyWeek(id));
   }
+
+  // migration : anciennes semaines sans sessionInstances (ancien format à table unique)
+  weekOrder.forEach(id=>{
+    const wk = weeks[id];
+    if(!wk) return;
+    if(!wk.sessionInstances || !wk.sessionInstances.length){
+      if(wk.sessionLogs && wk.sessionLogs[1] && wk.sessionLogs[1].length){
+        wk.sessionInstances = [{ id:1, date:"", log: wk.sessionLogs[1] }];
+        wk.nextInstanceId = 2;
+      } else {
+        wk.sessionInstances = [emptyInstance(1)];
+        wk.nextInstanceId = 2;
+      }
+      delete wk.sessionLogs;
+    }
+    if(wk.nextInstanceId === undefined){
+      wk.nextInstanceId = Math.max(0, ...wk.sessionInstances.map(i=>i.id)) + 1;
+    }
+  });
+
   activeWeek = weekOrder[0];
 
   // 3) premier branchement de la synchro : si ce téléphone/ordi a déjà des données
@@ -888,43 +907,58 @@ function dailyTableHTML(w){
   </table>`;
 }
 
-function reconcileSessionLog(w, session){
-  const existing = w.sessionLogs[session.id] || [];
+function reconcileInstanceLog(instance){
+  const existing = instance.log || [];
   const byId = {};
   existing.forEach(e=>{ byId[e.exId] = e; });
-  const rows = session.exercises.map(ex=>{
+  const rows = SESSIONS[0].exercises.map(ex=>{
     const name = stripTags(ex.name);
     if(byId[ex.id]) return { ...byId[ex.id], name };
     return { exId: ex.id, name, charge:"", reps:"", ressenti:"", note:"" };
   });
-  w.sessionLogs[session.id] = rows;
+  instance.log = rows;
   return rows;
 }
 
-function sessionLogTableHTML(w, session){
-  const logs = reconcileSessionLog(w, session);
-  const rows = logs.map((row,idx)=>`<tr>
+function instanceCardHTML(w, instance, idx, total){
+  const rows = reconcileInstanceLog(instance);
+  const rowsHtml = rows.map((row,rIdx)=>`<tr>
     <td class="ex-name-cell">${row.name}</td>
-    <td><input type="text" data-kind="log" data-session="${session.id}" data-idx="${idx}" data-field="charge" value="${escapeAttr(row.charge)}" placeholder="kg"></td>
-    <td><input type="text" data-kind="log" data-session="${session.id}" data-idx="${idx}" data-field="reps" value="${escapeAttr(row.reps)}" placeholder="8/7/6"></td>
-    <td><input type="text" data-kind="log" data-session="${session.id}" data-idx="${idx}" data-field="ressenti" value="${escapeAttr(row.ressenti)}" placeholder="/5"></td>
-    <td><input type="text" data-kind="log" data-session="${session.id}" data-idx="${idx}" data-field="note" value="${escapeAttr(row.note)}" placeholder="note"></td>
+    <td><input type="text" data-kind="instlog" data-instance="${idx}" data-idx="${rIdx}" data-field="charge" value="${escapeAttr(row.charge)}" placeholder="kg"></td>
+    <td><input type="text" data-kind="instlog" data-instance="${idx}" data-idx="${rIdx}" data-field="reps" value="${escapeAttr(row.reps)}" placeholder="8/7/6"></td>
+    <td><input type="text" data-kind="instlog" data-instance="${idx}" data-idx="${rIdx}" data-field="ressenti" value="${escapeAttr(row.ressenti)}" placeholder="/5"></td>
+    <td><input type="text" data-kind="instlog" data-instance="${idx}" data-idx="${rIdx}" data-field="note" value="${escapeAttr(row.note)}" placeholder="note"></td>
   </tr>`).join("");
-  return `<details class="session-card">
+  return `<details class="session-card" open>
     <summary>
-      <div class="medallion">${session.roman}</div>
+      <div class="medallion">${idx+1}</div>
       <div class="session-head-text">
-        <div class="session-head-title">${session.title}${session.optional?'<span class="badge-optional">optionnelle</span>':''}</div>
+        <div class="session-head-title">Séance du ${instance.date ? formatDateShort(instance.date) : "—"}</div>
       </div>
       ${ICONS.chevron}
     </summary>
     <div class="session-body">
+      <div style="display:flex; align-items:center; gap:10px; margin:8px 0 12px;">
+        <input type="date" data-kind="instmeta" data-instance="${idx}" data-field="date" value="${instance.date}" style="max-width:170px;">
+        ${total>1?`<button class="btn btn-danger" data-kind="instdelete" data-instance="${idx}" style="margin-left:auto;">Supprimer</button>`:""}
+      </div>
       <table class="log-table session-log-table">
         <thead><tr><th>Exercice</th><th>Charge</th><th>Reps</th><th>Ressenti</th><th>Note</th></tr></thead>
-        <tbody>${rows}</tbody>
+        <tbody>${rowsHtml}</tbody>
       </table>
     </div>
   </details>`;
+}
+
+function formatDateShort(iso){
+  const parts = iso.split("-");
+  if(parts.length!==3) return iso;
+  return `${parts[2]}/${parts[1]}`;
+}
+
+function sessionInstancesHTML(w){
+  const cards = w.sessionInstances.map((inst,idx)=>instanceCardHTML(w, inst, idx, w.sessionInstances.length)).join("");
+  return `${cards}<button class="btn" id="add-instance-btn" style="width:100%; margin-top:8px;">+ Ajouter une séance faite cette semaine</button>`;
 }
 function escapeAttr(s){ return (s||"").replace(/&/g,"&amp;").replace(/"/g,"&quot;"); }
 
@@ -990,7 +1024,8 @@ async function renderSuivi(){
     </section>
     <section class="block">
       <h2 class="block-title">Détail des séances</h2>
-      ${SESSIONS.map(s=>sessionLogTableHTML(w,s)).join("")}
+      <p class="block-sub">Ajoute une carte à chaque fois que tu vas t'entraîner cette semaine.</p>
+      ${sessionInstancesHTML(w)}
     </section>
     <section class="block">
       <h2 class="block-title">Bilan de fin de semaine</h2>
@@ -1062,13 +1097,43 @@ function bindSuiviEvents(){
     });
   });
 
-  panel.querySelectorAll('input[data-kind="log"]').forEach(inp=>{
+  panel.querySelectorAll('input[data-kind="instlog"]').forEach(inp=>{
     inp.addEventListener('input', e=>{
-      const sid = inp.dataset.session, idx = parseInt(inp.dataset.idx,10), field = inp.dataset.field;
-      w.sessionLogs[sid][idx][field] = inp.value;
+      const instIdx = parseInt(inp.dataset.instance,10), rowIdx = parseInt(inp.dataset.idx,10), field = inp.dataset.field;
+      w.sessionInstances[instIdx].log[rowIdx][field] = inp.value;
       scheduleSave();
     });
   });
+
+  panel.querySelectorAll('input[data-kind="instmeta"]').forEach(inp=>{
+    inp.addEventListener('change', e=>{
+      const instIdx = parseInt(inp.dataset.instance,10), field = inp.dataset.field;
+      w.sessionInstances[instIdx][field] = inp.value;
+      scheduleSave();
+      renderSuivi();
+    });
+  });
+
+  panel.querySelectorAll('button[data-kind="instdelete"]').forEach(btn=>{
+    btn.addEventListener('click', ()=>{
+      const instIdx = parseInt(btn.dataset.instance,10);
+      if(w.sessionInstances.length<=1) return;
+      if(!confirm("Supprimer cette séance de la semaine ?")) return;
+      w.sessionInstances.splice(instIdx,1);
+      scheduleSave();
+      renderSuivi();
+    });
+  });
+
+  const addInstanceBtn = document.getElementById('add-instance-btn');
+  if(addInstanceBtn){
+    addInstanceBtn.addEventListener('click', ()=>{
+      w.sessionInstances.push(emptyInstance(w.nextInstanceId));
+      w.nextInstanceId += 1;
+      scheduleSave();
+      renderSuivi();
+    });
+  }
 
   panel.querySelectorAll('[data-kind="bilan"]').forEach(inp=>{
     inp.addEventListener('input', e=>{
