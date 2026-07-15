@@ -888,8 +888,21 @@ function dailyTableHTML(w){
   </table>`;
 }
 
+function reconcileSessionLog(w, session){
+  const existing = w.sessionLogs[session.id] || [];
+  const byId = {};
+  existing.forEach(e=>{ byId[e.exId] = e; });
+  const rows = session.exercises.map(ex=>{
+    const name = stripTags(ex.name);
+    if(byId[ex.id]) return { ...byId[ex.id], name };
+    return { exId: ex.id, name, charge:"", reps:"", ressenti:"", note:"" };
+  });
+  w.sessionLogs[session.id] = rows;
+  return rows;
+}
+
 function sessionLogTableHTML(w, session){
-  const logs = w.sessionLogs[session.id];
+  const logs = reconcileSessionLog(w, session);
   const rows = logs.map((row,idx)=>`<tr>
     <td class="ex-name-cell">${row.name}</td>
     <td><input type="text" data-kind="log" data-session="${session.id}" data-idx="${idx}" data-field="charge" value="${escapeAttr(row.charge)}" placeholder="kg"></td>
@@ -913,7 +926,6 @@ function sessionLogTableHTML(w, session){
     </div>
   </details>`;
 }
-
 function escapeAttr(s){ return (s||"").replace(/&/g,"&amp;").replace(/"/g,"&quot;"); }
 
 async function bilanHTML(w){
@@ -970,6 +982,7 @@ async function renderSuivi(){
         <input type="date" id="week-start" value="${w.dateStart}">
         <span>au</span>
         <input type="date" id="week-end" value="${w.dateEnd}">
+        <button class="btn btn-danger" id="delete-week-btn" style="margin-left:auto;">Supprimer cette semaine</button>
       </div>
       <h2 class="block-title">Vue de la semaine</h2>
       <p class="block-sub">Objectif 10 000 pas par jour, salle ou repos inclus.</p>
@@ -1005,6 +1018,29 @@ function bindSuiviEvents(){
       weekOrder.push(nextId);
       weeks[nextId] = emptyWeek(nextId);
       activeWeek = nextId;
+      scheduleSave();
+      renderSuivi();
+      renderWeekStrip();
+    });
+  }
+
+  const deleteBtn = document.getElementById('delete-week-btn');
+  if(deleteBtn){
+    deleteBtn.addEventListener('click', async ()=>{
+      if(weekOrder.length <= 1){
+        alert("Impossible de supprimer la dernière semaine restante.");
+        return;
+      }
+      if(!confirm(`Supprimer définitivement la Semaine ${activeWeek} ? Cette action est irréversible.`)) return;
+      const idx = weekOrder.indexOf(activeWeek);
+      weekOrder.splice(idx, 1);
+      delete weeks[activeWeek];
+      delete photoCache[activeWeek];
+      try{ localStorage.removeItem("agoge_photo_"+activeWeek); }catch(e){}
+      if(syncEnabled){
+        try{ await db.ref("agoge_photos/"+activeWeek).remove(); }catch(e){ console.error(e); }
+      }
+      activeWeek = weekOrder[Math.max(0, idx-1)];
       scheduleSave();
       renderSuivi();
       renderWeekStrip();
