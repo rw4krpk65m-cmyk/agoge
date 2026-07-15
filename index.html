@@ -397,187 +397,67 @@ nav.tabbar button svg{width:20px; height:20px;}
    ===================================================================== */
 const SESSIONS = [
   {
-    id:1, roman:"I", title:"Séance 1",
-    focus:"Push dominant — pectoraux (incliné), épaules, triceps, dos en secondaire",
+    id:1, roman:"I", title:"Ta séance",
+    focus:"Full body — à répéter 3 à 4 fois par semaine, n'importe quels jours",
     exercises:[
-      { id:"s1e1", name:"Développé incliné (barre ou haltères)", reps:"4-6 / 6-8 / 8-10", rest:"2'30''",
+      { id:"e1", name:"Développé militaire (barre ou haltères)", reps:"4-6 / 6-8 / 8-10", rest:"2'30''",
+        note:"Top set puis -10% du poids à chaque série",
+        muscles:"Épaules (deltoïde avant et moyen), triceps",
+        position:"Debout ou assis, dos droit, barre ou haltères à hauteur d'épaules, paumes tournées vers l'avant.",
+        steps:["Pousse la charge au-dessus de la tête en expirant, sans la cogner en haut.","Redescends en contrôlant jusqu'aux épaules.","Garde le dos gainé pendant tout le mouvement, pas de cambrure pour « aider » à pousser."],
+        mistakes:["Cambrer le bas du dos pour pousser plus lourd.","Descendre trop vite sans contrôle.","Pousser la charge vers l'avant plutôt que vers le haut."],
+        variant:null },
+      { id:"e2", name:"Tractions", reps:"4-6 / 6-8 / 8-10", rest:"2'",
+        note:"Top set puis -10% du poids à chaque série (lestées si possible)",
+        muscles:"Dorsaux, biceps, avant-bras",
+        position:"Suspendu à la barre, prise large ou neutre, bras tendus, épaules engagées vers le bas — pas relâchées ni « pendues ».",
+        steps:["Tire en amenant les coudes vers le bas et vers l'arrière, poitrine vers la barre.","Monte jusqu'à ce que le menton dépasse la barre.","Redescends en contrôlant, bras complètement tendus en bas avant de retirer."],
+        mistakes:["Tirer uniquement avec les bras sans engager le dos.","Se balancer avec les jambes pour s'aider.","Redescendre trop vite, sans contrôle."],
+        variant:"Si tu ne peux pas encore faire de tractions à ton poids de corps, utilise une machine de tractions assistées ou le tirage vertical à la poulie." },
+      { id:"e3", name:"Développé incliné (barre ou haltères)", reps:"4-6 / 6-8 / 8-10", rest:"2'30''",
         note:"Top set puis -10% du poids à chaque série",
         muscles:"Haut des pectoraux, épaules avant, triceps",
         position:"Banc incliné à 30-45°, dos plaqué au banc, pieds à plat au sol, barre ou haltères au niveau du haut des pectoraux, prise un peu plus large que les épaules.",
-        steps:["Inspire, descends la charge jusqu'à toucher légèrement le haut de la poitrine, coudes à environ 45° du buste (ni collés, ni à 90°).",
-               "Pousse en expirant, sans verrouiller complètement les coudes en haut.",
-               "Garde les omoplates serrées et le bas du dos légèrement cambré, sans décoller les fesses du banc."],
+        steps:["Inspire, descends la charge jusqu'à toucher légèrement le haut de la poitrine, coudes à environ 45° du buste (ni collés, ni à 90°).","Pousse en expirant, sans verrouiller complètement les coudes en haut.","Garde les omoplates serrées et le bas du dos légèrement cambré, sans décoller les fesses du banc."],
         mistakes:["Cambrer excessivement le bas du dos.","Laisser les coudes partir trop en arrière (risque épaule).","Faire rebondir la charge sur la poitrine."],
         variant:null },
-      { id:"s1e2", name:"Tractions lestées prise neutre", reps:"4-6 / 6-8 / 8-10", rest:"2'",
-        note:"Top set puis -10% du poids à chaque série",
-        muscles:"Dorsaux, biceps, avant-bras",
-        position:"Suspendu à la barre, prise neutre (paumes face à face), bras tendus, épaules engagées vers le bas — pas relâchées ni « pendues ».",
-        steps:["Tire en amenant les coudes vers le bas et vers l'arrière, poitrine vers la barre.","Monte jusqu'à ce que le menton dépasse la barre.","Redescends en contrôlant, bras complètement tendus en bas avant de retirer."],
-        mistakes:["Tirer uniquement avec les bras sans engager le dos.","Se balancer avec les jambes pour s'aider.","Redescendre trop vite, sans contrôle."],
-        variant:"Si tu ne peux pas encore faire de tractions à ton poids de corps, utilise une machine de tractions assistées ou le tirage vertical à la poulie, même prise, même amplitude." },
-      { id:"s1e3", name:"Développé militaire assis (haltères)", reps:"8-12", rest:"1'30''",
-        note:"Solliciter les épaules sans tricher",
-        muscles:"Épaules (deltoïde avant et moyen), triceps",
-        position:"Assis, dos droit contre le dossier si possible, haltères à hauteur d'épaules, paumes tournées vers l'avant.",
-        steps:["Pousse les haltères au-dessus de la tête en expirant, sans les cogner en haut.","Redescends en contrôlant jusqu'aux épaules.","Garde le dos gainé pendant tout le mouvement, pas de cambrure pour « aider » à pousser."],
-        mistakes:["Cambrer le bas du dos pour pousser plus lourd.","Descendre trop vite sans contrôle.","Pousser les haltères vers l'avant plutôt que vers le haut."],
-        variant:null },
-      { id:"s1e4", name:"Dips (lestés si possible)", reps:"10-15", rest:"1'30''-2'",
-        note:"Torse penché en avant pour le pec",
-        muscles:"Pectoraux (bas), triceps, épaules avant",
-        position:"Bras tendus en appui sur les barres parallèles, corps suspendu, buste légèrement penché en avant pour cibler les pectoraux.",
-        steps:["Descends en pliant les coudes jusqu'à sentir un bon stretch dans les pecs/épaules (coudes autour de 90°).","Remonte en poussant, sans verrouiller brutalement les coudes en haut."],
-        mistakes:["Descendre trop bas si ça tire dans l'épaule — c'est un signal d'arrêt.","Garder le buste trop droit (ça sollicite surtout le triceps, pas le pec)."],
-        variant:"Utilise la machine de dips assistés, ou pose les pieds au sol pour retirer une partie de ton poids, en attendant de gérer ton poids de corps complet." },
-      { id:"s1e5", name:"Superset : Curl incliné &amp; Skull crusher", reps:"10-15 &amp; 10-15", rest:"30-45''",
-        note:"1 méga série, pas de repos entre les 2", isSuperset:true,
-        parts:[
-          { name:"Curl incliné (haltères)", muscles:"Biceps",
-            position:"Assis sur un banc incliné à 45-60°, dos plaqué au banc, bras tendus vers le bas.",
-            steps:["Fléchis le coude en gardant le bras collé au buste tout le long.","Monte l'haltère, contracte 1 seconde en haut.","Redescends en contrôlant, sans lâcher le poids en bas."],
-            mistakes:["Balancer le buste pour aider à monter.","Décoller le coude vers l'avant en montant."] },
-          { name:"Skull crusher (extension triceps couché, barre EZ)", muscles:"Triceps",
-            position:"Allongé sur un banc, bras tendus à la verticale au-dessus des épaules, barre EZ en mains.",
-            steps:["Plie les coudes en amenant la barre vers le front — pas vers le cou.","Garde les coudes fixes, ils ne bougent pas vers l'avant ou l'arrière.","Remonte en tendant les bras."],
-            mistakes:["Laisser les coudes s'écarter ou bouger.","Aller trop vite et perdre le contrôle de la barre près du visage."] }
-        ] }
-    ]
-  },
-  {
-    id:2, roman:"II", title:"Séance 2",
-    focus:"Pectoraux (plat) + dos largeur + arrière épaule + bras",
-    exercises:[
-      { id:"s2e1", name:"Développé couché (barre)", reps:"4-6 / 6-8 / 8-10", rest:"2'30''",
-        note:"Top set puis -10% du poids à chaque série",
-        muscles:"Pectoraux (milieu/globalité), triceps, épaules avant",
-        position:"Allongé sur un banc plat, pieds à plat au sol, barre au niveau du milieu de la poitrine (mamelons), prise un peu plus large que les épaules.",
-        steps:["Inspire, descends la barre en contrôlant jusqu'à toucher légèrement le milieu de la poitrine, coudes à environ 45° du buste.","Pousse en expirant, sans verrouiller complètement les coudes en haut.","Garde les omoplates serrées et les pieds bien ancrés au sol pendant toute la série."],
-        mistakes:["Faire rebondir la barre sur la poitrine.","Décoller les fesses du banc pour pousser plus lourd.","Coudes à 90° du buste (trop ouverts, stress sur l'épaule)."],
-        variant:null },
-      { id:"s2e2", name:"Tirage vertical poulie (lat pulldown), prise large", reps:"4-6 / 6-8 / 8-10", rest:"2'",
-        note:"Top set puis -10% du poids à chaque série",
-        muscles:"Dorsaux (largeur), biceps",
-        position:"Assis, cuisses calées sous les rouleaux, barre large en mains, bras tendus au-dessus de la tête.",
-        steps:["Tire la barre vers le haut de la poitrine en amenant les coudes vers le bas et vers l'arrière.","Contracte le dos en bas du mouvement, poitrine légèrement sortie.","Remonte en contrôlant, bras complètement tendus en haut."],
-        mistakes:["Tirer la barre derrière la nuque (mauvais pour les épaules).","Se pencher en arrière et utiliser le poids du corps plutôt que le dos.","Remonter trop vite sans contrôle."],
-        variant:null },
-      { id:"s2e3", name:"Écarté couché (haltères) ou pec deck", reps:"10-15", rest:"1'",
-        note:"Isolation pec, amplitude complète",
-        muscles:"Pectoraux (isolation)",
-        position:"Allongé sur un banc plat, haltères au-dessus de la poitrine, bras légèrement fléchis et fixes (ou assis sur la machine pec deck, avant-bras contre les coussinets).",
-        steps:["Ouvre les bras sur les côtés en gardant le léger angle au coude, jusqu'à sentir un stretch dans les pecs.","Remonte en refermant les bras comme si tu enlaçais un tronc d'arbre, contracte en haut."],
-        mistakes:["Plier/déplier le coude pendant le mouvement (ça devient un développé).","Descendre trop bas et forcer sur l'épaule."],
-        variant:null },
-      { id:"s2e4", name:"Oiseau (rear delt fly)", reps:"10-15", rest:"1'",
-        note:"Focus arrière d'épaule / posture",
-        muscles:"Arrière d'épaule, haut du dos",
-        position:"Buste penché en avant à environ 45°, dos droit, haltères légers en mains, bras tendus vers le sol.",
-        steps:["Lève les bras sur les côtés jusqu'à hauteur des épaules, coudes légèrement fléchis et fixes.","Contracte entre les omoplates en haut du mouvement.","Redescends en contrôlant."],
-        mistakes:["Redresser le buste pour aider à lever plus lourd.","Balancer les bras au lieu de contrôler le mouvement."],
-        variant:null },
-      { id:"s2e5", name:"Superset : Curl marteau &amp; Extension triceps poulie", reps:"10-15 &amp; 10-15", rest:"30-45''",
-        note:"1 méga série, pas de repos entre les 2", isSuperset:true,
-        parts:[
-          { name:"Curl marteau (haltères)", muscles:"Biceps, avant-bras",
-            position:"Debout ou assis, haltères en mains, prise neutre (paumes face à face, comme si tu tenais un marteau).",
-            steps:["Fléchis les coudes en gardant les bras collés au buste et la prise neutre du début à la fin.","Contracte en haut, redescends en contrôlant."],
-            mistakes:["Tourner le poignet pendant le mouvement.","Balancer le buste pour aider à monter."] },
-          { name:"Extension triceps poulie (corde ou barre)", muscles:"Triceps",
-            position:"Face à la poulie haute, coudes collés au buste, avant-bras parallèles au sol au départ.",
-            steps:["Tends les bras vers le bas en gardant les coudes fixes et collés au corps.","Contracte en bas, remonte en contrôlant sans que les coudes ne bougent."],
-            mistakes:["Décoller les coudes du buste.","Utiliser tout le corps pour pousser plus lourd."] }
-        ] }
-    ]
-  },
-  {
-    id:3, roman:"III", title:"Séance 3",
-    focus:"Pull dominant — dos, épaules, biceps",
-    exercises:[
-      { id:"s3e1", name:"Rowing bûcheron (un bras, haltère)", reps:"4-6 / 6-8 / 8-10", rest:"1'/côté",
-        note:"Top set puis -10% du poids à chaque série",
-        muscles:"Dorsaux, milieu du dos",
-        position:"Un genou et une main posés sur un banc, l'autre pied au sol, dos droit et à peu près parallèle au sol, haltère dans la main libre, bras tendu vers le bas.",
-        steps:["Tire l'haltère vers la hanche en amenant le coude vers l'arrière.","Contracte le dos en haut du mouvement.","Redescends en contrôlant, bras tendu."],
-        mistakes:["Tourner le buste pour tirer plus haut.","Dos qui s'arrondit."],
-        variant:null },
-      { id:"s3e2", name:"Tirage horizontal (poulie basse)", reps:"8-12", rest:"2'",
+      { id:"e4", name:"Tirage horizontal (poulie basse)", reps:"8-12", rest:"2'",
         note:"Rétraction scapulaire en fin de mouvement",
         muscles:"Dorsaux, milieu du dos, biceps",
         position:"Assis, pieds calés sur les repose-pieds, buste droit, poignée en mains, bras tendus devant toi.",
         steps:["Tire la poignée vers le nombril en amenant les coudes vers l'arrière.","Rapproche les omoplates en fin de mouvement.","Reviens en contrôlant, bras tendus, sans arrondir le dos."],
         mistakes:["Se pencher en arrière pour tirer plus fort.","Dos qui s'arrondit à la fin du retour."],
         variant:null },
-      { id:"s3e3", name:"Upright row", reps:"10-15", rest:"1'",
-        note:"Coudes qui montent, pas les épaules",
-        muscles:"Épaules (deltoïde moyen), trapèzes",
-        position:"Debout, barre ou haltères tenus devant les cuisses, prise resserrée.",
-        steps:["Monte la charge le long du corps en menant le mouvement avec les coudes.","Monte jusqu'à hauteur de poitrine environ, coudes toujours plus hauts que les mains.","Redescends en contrôlant."],
-        mistakes:["Monter trop haut (risque épaule).","Tirer avec les mains plutôt que de mener avec les coudes."],
-        variant:null },
-      { id:"s3e4", name:"Élévations latérales", reps:"10-20", rest:"30''/côté",
-        note:"Léger, focus deltoïde moyen",
-        muscles:"Épaules (deltoïde moyen)",
-        position:"Debout, haltères légers en mains, bras le long du corps, léger fléchissement des coudes.",
-        steps:["Lève les bras sur les côtés jusqu'à hauteur d'épaule.","Coudes légèrement pliés et fixes tout le mouvement.","Redescends en contrôlant, sans lâcher le poids."],
-        mistakes:["Monter au-dessus de la hauteur des épaules.","Balancer le buste pour aider — ici le poids léger est normal."],
-        variant:null },
-      { id:"s3e5", name:"Superset : Curl corde poulie &amp; Extension triceps nuque", reps:"10-15 &amp; 10-15", rest:"30-45''",
-        note:"1 méga série, pas de repos entre les 2", isSuperset:true,
+      { id:"e5", name:"Dips", reps:"10-15", rest:"1'30''-2'",
+        note:"Torse penché en avant pour le pec",
+        muscles:"Pectoraux (bas), triceps, épaules avant",
+        position:"Bras tendus en appui sur les barres parallèles, corps suspendu, buste légèrement penché en avant pour cibler les pectoraux.",
+        steps:["Descends en pliant les coudes jusqu'à sentir un bon stretch dans les pecs/épaules (coudes autour de 90°).","Remonte en poussant, sans verrouiller brutalement les coudes en haut."],
+        mistakes:["Descendre trop bas si ça tire dans l'épaule — c'est un signal d'arrêt.","Garder le buste trop droit (ça sollicite surtout le triceps, pas le pec)."],
+        variant:"Utilise la machine de dips assistés, ou pose les pieds au sol pour retirer une partie de ton poids." },
+      { id:"e6", name:"Superset poulie : extension triceps &amp; curl biceps", reps:"10-15 &amp; 10-15", rest:"30-45''",
+        note:"1 méga série à la poulie double, pas de repos entre les 2", isSuperset:true,
         parts:[
-          { name:"Curl corde poulie", muscles:"Biceps",
+          { name:"Extension triceps (corde à la poulie haute)", muscles:"Triceps",
+            position:"Face à la poulie haute, coudes collés au buste, avant-bras parallèles au sol au départ.",
+            steps:["Tends les bras vers le bas en gardant les coudes fixes et collés au corps.","Contracte en bas, remonte en contrôlant sans que les coudes ne bougent."],
+            mistakes:["Décoller les coudes du buste.","Utiliser tout le corps pour pousser plus lourd."] },
+          { name:"Curl biceps (corde à la poulie basse)", muscles:"Biceps",
             position:"Face à la poulie basse, corde en mains, bras tendus, coudes collés au buste.",
             steps:["Fléchis les coudes en amenant la corde vers les épaules.","Écarte légèrement les mains en haut pour bien contracter le biceps.","Redescends en contrôlant."],
-            mistakes:["Balancer le buste.","Décoller les coudes du buste."] },
-          { name:"Extension triceps nuque (poulie ou haltère)", muscles:"Triceps",
-            position:"Debout ou assis, bras au-dessus de la tête, coudes pointant vers le plafond.",
-            steps:["Descends le poids derrière la tête en pliant les coudes, sans les écarter.","Remonte en tendant les bras complètement."],
-            mistakes:["Écarter les coudes pendant le mouvement.","Cambrer le dos pour aider à tendre les bras."] }
-        ] }
-    ]
-  },
-  {
-    id:4, roman:"IV", title:"Séance 4", optional:true,
-    focus:"Ischios / fessiers dominant — hip thrust, RDL, gainage (pas indispensable si tu cours/roules beaucoup)",
-    exercises:[
-      { id:"s4e1", name:"Romanian deadlift (RDL)", reps:"8-12", rest:"1'30''",
-        note:"Hanches en arrière, jambes semi-tendues",
-        muscles:"Ischios-jambiers, fessiers, bas du dos",
-        position:"Debout, barre ou haltères devant les cuisses, genoux légèrement fléchis — pas verrouillés.",
-        steps:["Pousse les hanches vers l'arrière en gardant le dos droit (le dos ne se « plie » pas, ce sont les hanches qui bougent).","Descends la charge le long des jambes jusqu'à sentir un bon stretch dans les ischios (à peu près mi-tibia).","Remonte en poussant les hanches vers l'avant, contracte les fessiers en haut."],
-        mistakes:["Arrondir le dos.","Trop plier les genoux (le mouvement devient un squat).","Descendre plus bas que ce que la souplesse permet sans arrondir le dos."],
-        variant:null },
-      { id:"s4e2", name:"One leg hip thrust", reps:"10-15/côté", rest:"30''/côté",
-        note:"Contraction fessier en haut de mouvement",
-        muscles:"Fessiers",
-        position:"Haut du dos appuyé sur un banc, un pied au sol genou plié, l'autre jambe tendue ou repliée en l'air.",
-        steps:["Pousse par le talon au sol pour monter les hanches.","Contracte fort le fessier en haut du mouvement.","Redescends en contrôlant, sans reposer complètement les fesses au sol entre les répétitions."],
-        mistakes:["Pousser avec le bas du dos plutôt qu'avec le fessier.","Cambrer excessivement en haut du mouvement."],
-        variant:null },
-      { id:"s4e3", name:"Leg press (ou squat gobelet)", reps:"10-15", rest:"1'30''",
-        note:"Amplitude complète",
-        muscles:"Quadriceps, fessiers",
-        position:"Assis sur la machine, dos et bassin bien calés contre le siège, pieds largeur épaules sur la plateforme.",
-        steps:["Descends en pliant les genoux jusqu'à environ 90°.","Remonte en poussant, sans verrouiller complètement les genoux en haut."],
-        mistakes:["Descendre trop bas au point que le bas du dos décolle du siège.","Verrouiller brutalement les genoux en fin de poussée."],
-        variant:null },
-      { id:"s4e4", name:"Mollets assis", reps:"10-15", rest:"1'",
-        note:"Tempo contrôlé",
-        muscles:"Mollets",
-        position:"Assis à la machine, coussinets posés sur les genoux, pointes de pieds sur la plateforme.",
-        steps:["Monte sur la pointe des pieds le plus haut possible.","Contracte 1 seconde.","Redescends en étirant complètement, talons bien bas."],
-        mistakes:["Amplitude coupée.","Mouvement trop rapide."],
-        variant:null },
-      { id:"s4e5", name:"Gainage (planche + rotations)", reps:"30-45'' de maintien", rest:"45''",
-        note:"Ventre rentré, pas de cambrure",
-        muscles:"Abdominaux, obliques, transverse",
-        position:"Appui sur les avant-bras et les pointes de pieds, corps aligné tête-bassin-talons, comme une planche droite.",
-        steps:["Maintiens la position sans creuser le dos ni cambrer les lombaires.","Respire normalement, ne bloque pas ta respiration.","Pour les rotations : depuis la planche, pivote les hanches doucement d'un côté puis de l'autre en gardant les appuis fixes."],
-        mistakes:["Laisser les fesses monter ou descendre par rapport à la ligne du corps.","Bloquer la respiration."],
-        variant:null }
+            mistakes:["Balancer le buste.","Décoller les coudes du buste."] }
+        ] },
+      { id:"e7", name:"Relevé de genoux suspendu", reps:"10-15", rest:"1'",
+        note:"Suspendu à la barre de traction, genoux vers le torse",
+        muscles:"Abdominaux (grand droit), fléchisseurs de hanche, avant-bras (gainage de prise)",
+        position:"Suspendu à la barre de traction, bras tendus, jambes tendues ou légèrement fléchies.",
+        steps:["Remonte les genoux vers le torse en enroulant le bassin (pas juste en pliant les hanches).","Contracte les abdos en haut du mouvement.","Redescends en contrôlant, sans te balancer."],
+        mistakes:["Se balancer avec tout le corps pour prendre de l'élan.","Ne plier que les hanches sans enrouler le bassin (ça sollicite surtout les fléchisseurs de hanche, pas les abdos)."],
+        variant:"Genoux repliés et amplitude réduite si le gainage suspendu est encore difficile, ou remplace par un gainage classique (planche)." }
     ]
   }
 ];
+
 
 const REST_EXERCISES = [
   { id:"r1", name:"Pompes", reps:"4 tours de 15 rép", rest:"—",
@@ -607,13 +487,13 @@ const REST_EXERCISES = [
 ];
 
 const PLANNING = [
-  { day:"Lundi", seance:"Séance 1 (salle)", rest:false },
-  { day:"Mardi", seance:"Repos ou vélo/course léger", rest:true },
-  { day:"Mercredi", seance:"Séance 2 (salle)", rest:false },
-  { day:"Jeudi", seance:"Repos actif", rest:true },
-  { day:"Vendredi", seance:"Séance 3 (salle)", rest:false },
-  { day:"Samedi", seance:"Séance 4 (salle, optionnel)", rest:true },
-  { day:"Dimanche", seance:"Repos complet", rest:true }
+  { day:"Lundi" },
+  { day:"Mardi" },
+  { day:"Mercredi" },
+  { day:"Jeudi" },
+  { day:"Vendredi" },
+  { day:"Samedi" },
+  { day:"Dimanche" }
 ];
 
 const ICONS = {
@@ -800,9 +680,8 @@ function renderReview(){
   const w = weeks[activeWeek];
   if(!w) return "";
   const doneCount = DAY_KEYS.filter(d=>w.days[d].done).length;
-  const gymDays = PLANNING.filter(p=>!p.rest).length;
   const stepsCount = DAY_KEYS.filter(d=>w.days[d].steps).length;
-  return `<span>Semaine ${activeWeek}</span> · <span><b>${doneCount}</b>/${gymDays} séances</span> · <span><b>${stepsCount}</b>/7 jours à 10 000 pas</span>`;
+  return `<span>Semaine ${activeWeek}</span> · <span><b>${doneCount}</b> séance${doneCount>1?'s':''} cette semaine</span> · <span><b>${stepsCount}</b>/7 jours à 10 000 pas</span>`;
 }
 
 function repsNoteHTML(){
@@ -816,8 +695,14 @@ function repsNoteHTML(){
 }
 
 function planningTableHTML(){
-  const rows = PLANNING.map(p=>`<tr><td class="day-name">${p.day}</td><td class="${p.rest?'tag-rest':''}">${p.seance}</td></tr>`).join("");
-  return `<table class="plan-table"><thead><tr><th>Jour</th><th>Séance</th></tr></thead><tbody>${rows}</tbody></table>`;
+  return `<div class="note-box" style="border-left-color:var(--gold);">
+    <div class="note-title">Fréquence</div>
+    <ul>
+      <li>Vise 3 à 4 séances par semaine, n'importe quels jours qui t'arrangent.</li>
+      <li>Essaie de laisser au moins une journée de repos entre deux séances quand c'est possible.</li>
+      <li>Peu importe si tu décales un jour à l'autre (prévu lundi, fait mardi) — ce qui compte c'est le total sur la semaine, coché dans l'onglet Suivi.</li>
+    </ul>
+  </div>`;
 }
 
 function exerciseTableRow(ex){
@@ -874,12 +759,12 @@ function renderProgramme(){
   const el = document.getElementById("tab-programme");
   el.innerHTML = `
     <section class="block">
-      <h2 class="block-title">Planning hebdomadaire</h2>
-      <p class="block-sub">Focus haut du corps sur 3 séances. Les jambes sont déjà pas mal sollicitées par la course et le vélo — la séance 4 reste optionnelle.</p>
+      <h2 class="block-title">Rythme d'entraînement</h2>
+      <p class="block-sub">Une seule séance complète, à répéter plusieurs fois par semaine.</p>
       ${planningTableHTML()}
     </section>
     <section class="block">
-      <h2 class="block-title">Les séances</h2>
+      <h2 class="block-title">La séance</h2>
       ${repsNoteHTML()}
       ${SESSIONS.map(sessionCardProgrammeHTML).join("")}
     </section>
@@ -955,7 +840,7 @@ function renderGuide(){
       </ul>
     </section>
     <section class="block">
-      <h2 class="block-title">Les séances</h2>
+      <h2 class="block-title">La séance</h2>
       ${SESSIONS.map(sessionCardGuideHTML).join("")}
     </section>
     <section class="block">
@@ -990,7 +875,6 @@ function dailyTableHTML(w){
     const ressentiOpts = [1,2,3,4,5].map(n=>`<option value="${n}" ${String(d.ressenti)===String(n)?'selected':''}>${n}</option>`).join("");
     return `<tr>
       <td class="day-cell">${p.day}</td>
-      <td class="seance-cell">${p.seance}</td>
       <td class="check-cell"><input type="checkbox" data-kind="day" data-day="${p.day}" data-field="done" ${d.done?'checked':''}></td>
       <td class="check-cell"><input type="checkbox" data-kind="day" data-day="${p.day}" data-field="steps" ${d.steps?'checked':''}></td>
       <td><input type="date" data-kind="day" data-day="${p.day}" data-field="date" value="${d.date}"></td>
@@ -999,7 +883,7 @@ function dailyTableHTML(w){
     </tr>`;
   }).join("");
   return `<table class="log-table">
-    <thead><tr><th>Jour</th><th>Séance</th><th>Fait</th><th>10K pas</th><th>Date</th><th>Ressenti</th><th>Note</th></tr></thead>
+    <thead><tr><th>Jour</th><th>Séance faite</th><th>10K pas</th><th>Date</th><th>Ressenti</th><th>Note</th></tr></thead>
     <tbody>${rows}</tbody>
   </table>`;
 }
@@ -1034,7 +918,16 @@ function escapeAttr(s){ return (s||"").replace(/&/g,"&amp;").replace(/"/g,"&quot
 
 async function bilanHTML(w){
   const photo = await getPhoto(w.id);
+  const doneDays = DAY_KEYS.filter(d=>w.days[d].done);
+  const stepsDays = DAY_KEYS.filter(d=>w.days[d].steps).length;
+  const summaryText = doneDays.length
+    ? `${doneDays.length} séance${doneDays.length>1?'s':''} cette semaine — ${doneDays.join(', ')}`
+    : `Aucune séance cochée pour l'instant cette semaine`;
   return `
+    <div class="note-box" style="margin-bottom:16px;">
+      <div class="note-title">Résumé de la semaine</div>
+      <p style="margin:0; font-size:13px; color:var(--cream-dim);">${summaryText}.<br>${stepsDays}/7 jours à 10 000 pas.</p>
+    </div>
     <div class="photo-zone ${photo?'has-photo':''}" id="photo-zone">
       ${photo?`<img src="${photo}" alt="Photo semaine ${w.id}">`:`
         <div class="photo-placeholder">
@@ -1129,7 +1022,7 @@ function bindSuiviEvents(){
       const day = inp.dataset.day, field = inp.dataset.field;
       w.days[day][field] = inp.type==='checkbox' ? inp.checked : inp.value;
       scheduleSave();
-      if(field==='done' || field==='steps'){ renderWeekStrip(); }
+      if(field==='done' || field==='steps'){ renderWeekStrip(); updateBilanSummary(w); }
     });
   });
 
@@ -1194,6 +1087,17 @@ function resizeImage(file, maxWidth, quality){
    ===================================================================== */
 function renderWeekStrip(){
   document.getElementById('week-strip').innerHTML = renderReview();
+}
+
+function updateBilanSummary(w){
+  const el = document.querySelector('#bilan-zone .note-box p');
+  if(!el) return;
+  const doneDays = DAY_KEYS.filter(d=>w.days[d].done);
+  const stepsDays = DAY_KEYS.filter(d=>w.days[d].steps).length;
+  const summaryText = doneDays.length
+    ? `${doneDays.length} séance${doneDays.length>1?'s':''} cette semaine — ${doneDays.join(', ')}`
+    : `Aucune séance cochée pour l'instant cette semaine`;
+  el.innerHTML = `${summaryText}.<br>${stepsDays}/7 jours à 10 000 pas.`;
 }
 
 function setTab(tab){
